@@ -1,14 +1,20 @@
+// UserManager class
+/*
+    Usermanager holds all users, essentially a User Factory
+*/
+
+// Imports
 import java.util.HashMap;
 import java.util.Map;
 
-// singleton pattern
 public class UserManager {
     private static Map<String, User> userPool;
-
     private static UserManager userManager;
+    
     private UserManager(){
         userPool = new HashMap<>();
     }
+
     public boolean addUser(String userName){
         if(!checkIfUserExists(userName)){
             // initialize user with a name and 0 as initial score
@@ -18,6 +24,7 @@ public class UserManager {
         }
         return false;
     }
+
     public boolean removeUser(String userName){
         if(!checkIfUserExists(userName)){
             return false;
@@ -25,6 +32,7 @@ public class UserManager {
         userPool.remove(userName);
         return true;
     }
+    
     public User getUser(String userName){
         return userPool.get(userName);
     }

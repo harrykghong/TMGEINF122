@@ -1,4 +1,8 @@
 // Tile Class
+/*
+Tiles represent the objects that fill the board
+Tiles have a color
+*/
 
 // Imports
 import java.awt.Color;

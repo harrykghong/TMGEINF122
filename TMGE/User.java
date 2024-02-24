@@ -1,3 +1,4 @@
+package TMGE;
 // User class
 /*
     User is the player.
@@ -15,8 +16,8 @@ public class User {
         this.userScore = new Score();
     }
 
-    public Score getUserScore(){
-        return userScore;
+    public int getUserScore(){
+        return userScore.getScore();
     }
     public String getUserName(){
         return userName;

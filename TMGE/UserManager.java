@@ -1,3 +1,4 @@
+package TMGE;
 // UserManager class
 /*
     Usermanager holds all users, essentially a User Factory

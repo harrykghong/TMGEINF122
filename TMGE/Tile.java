@@ -6,7 +6,7 @@ Tiles have a color
 */
 
 // Imports
-import java.awt.Color;
+//import java.awt.Color;
   
 public class Tile {
 
@@ -29,11 +29,10 @@ public class Tile {
   // do we need 3  seperate values in constructor?
 
     public Tile (Color someColor) {
-        this.color = someColor ;
+        this.color = someColor;
     }
 	public Tile(int colorID) {
-        this.color = new Color(colorID); //COLOR ID DOES NOT TRANSLATE TO RGB VALUE, THIS IS SO MISLESADIGN
-        // Would be good to have a list of color enumsb here
+        this.color = Color.values()[colorID];
 	}
 
 	public Color getColor() {
@@ -47,6 +46,18 @@ public class Tile {
 
 @Override
     public boolean equals(Object obj) {
-        retu
+        if (obj == this) {
+            return true;
+        }
+ 
+        if (!(obj instanceof Tile)) {
+            return false;
+        }
+         
+		return this.color == ((Tile) obj).color;
     }
+
+
+
+	
 }

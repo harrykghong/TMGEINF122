@@ -10,9 +10,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-
-
-
 public class Spawner {
 	public Board board;
 	private String pattern;

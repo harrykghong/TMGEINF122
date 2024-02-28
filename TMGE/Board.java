@@ -8,6 +8,8 @@ It spawns in tiles.
 
 // Imports
 import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
+
 //import java.util.HashMap;
 //import java.util.Map;
 //import java.awt.Color;
@@ -27,9 +29,18 @@ public class Board {
 	int saveX;
 	int saveY;
 
-	Set<Integer> openSpaces; 
 
+	Set<Integer> openSpaces;
+	Set<Integer> toBeDeleted;
 	private Spawner spawner;
+
+
+	// Matthew's Work RN
+	public Board(Board template) {
+		this(template.row, template.col);
+	}
+
+
 
 	public Board(int row, int col) {
 		this.tileArray = new Tile[row][col];
@@ -41,6 +52,7 @@ public class Board {
 		this.saveX = -1;
 		this.saveY = -1;
 		this.openSpaces = new HashSet<Integer>();
+		this.toBeDeleted= new HashSet<Integer>();
 		for (int i = 0; i < this.size; i++) {
 			this.openSpaces.add(i);
 		}
@@ -63,6 +75,9 @@ public class Board {
 		this.tileArray[col][row] = new Tile(0);
 	}
 
+	public int toIndex(int col, int row) {
+		return row + col * (this.row);
+	}
 	public Tile getTile(int col, int row) {
 		return this.tileArray[col][row];
 	}
@@ -88,7 +103,6 @@ public class Board {
 		
 		saveX = -1;
 		saveY = -1;
-		
 		return true;
 	}
 
@@ -135,12 +149,22 @@ public class Board {
 			update(rule);
 		}
 	}
+
+	public void getIndex(){
+		
+	}
+
 	public void update(String rule){
 		switch(rule){
 			case "match 3 horizontal":
+				checkHorizontal(selectedTiles[0].getKey(), selectedTiles[0].getValue());
+				checkHorizontal(selectedTiles[1].getKey(), selectedTiles[1].getValue());
 				break;
 			case "match 3 colors":
+				// colorMatch();
 				break;
+			case "match 3 vertical":
+				// verticleMatchX();
 			default:
 				break;
 		}
@@ -178,34 +202,16 @@ public class Board {
 4444
 
 this requires 4 calls of this function, each time for a different targetValue
-*/ 
-public static boolean matchX(int[][] matrix, int targetValue) {
-    int rows = matrix.length;
-    int cols = matrix[0].length;
-	// if there is a match change the matched tile to null?
-	
-	/*
-	0000
-	0000
-	0000
-	0000
-	this is a board of tiles with 0, which i am treating as nulls
-	under the color enums, NULL is index 0
-	 */
-	
-	// disregard null specifically, it is val 0
-    // Horizontal Check
-    for (int i = 0; i < rows; i++) {
-		//if ()
-        if (matrix[i][0] != targetvalue) break;
-		for (int j = 0; j < cols; j++) {
-			if (matrix[i][j] != targetvalue) break;
-        }
-		// do not return, mark index for deletion
-		//return true;
-    }
+*/
 
-    // Vertical Check
+
+
+public boolean verticleMatchX(int[][] matrix, int targetValue) {
+	int rows = matrix.length;
+    int cols = matrix[0].length;
+
+
+
     for (int j = 0; j < cols; j++) {
         for (int i = 0; i < rows - 3; i++) {
             if (matrix[i][j] == targetValue &&
@@ -213,9 +219,27 @@ public static boolean matchX(int[][] matrix, int targetValue) {
                 matrix[i + 2][j] == targetValue &&
                 matrix[i + 3][j] == targetValue) {
                 return true;
+
             }
         }
     }
+
+}
+
+public  boolean matchX(int[][] matrix, int targetValue) {
+    int rows = matrix.length;
+    int cols = matrix[0].length;
+
+	verticleMatchX();
+	//Horizontal Match
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i][0] != targetValue) break;
+		for (int j = 0; j < cols; j++) {
+			if (matrix[i][j] != targetValue) break;
+        }
+		// do not return, mark index for deletion
+    }
+
 
     // Ascending Diagonal Check
     for (int i = 3; i < rows; i++) {
@@ -246,44 +270,63 @@ public static boolean matchX(int[][] matrix, int targetValue) {
 
 
 
-// Immediately after a swap, check for matches at both locations.
-// Does not check any other spots. It feels moreso like a helper function
 
-// Wait a minute why is this function responsible for swapping?
-// No use for selectorSwap()?
-// we are not swapping here its just a code from gpt very general prompt
-public boolean checkForMatches(int x1, int y1, int x2, int y2) {
-    // Swap elements
-    Tile temp = this.tileArray[x1][y1];
-    this.tileArray[x1][y1] = this.tileArray[x2][y2];
-    this.tileArray[x2][y2] = temp;
-    
-    // Check for matches
-    boolean matchFound = checkHorizontal(x1, y1) || checkVertical(x1, y1) ||
-                         checkHorizontal(x2, y2) || checkVertical(x2, y2);
-    
-    // If no match, swap back
-    if (!matchFound) {
-        temp = this.tileArray[x1][y1];
-        this.tileArray[x1][y1] = this.tileArray[x2][y2];
-        this.tileArray[x2][y2] = temp;
-    }
-    
-    return matchFound;
+
+private void sweepVertical(){
+
+	for (int col = 0; row < this.tileArray[0].length; col++) {
+		for (int row = 0; row < this.tileArray.length; row++) {
+			Tile someTiel = this.tileArray[row][col];
+		}
+
+	}
+	//Return the ones marked for deltete
 }
 
-// we need to change matched tile to something right?
 
-// nah ill override .equals for tile
+private void sweepHorizontal(){
+	for (int row = 0; row < this.tileArray.length; row++) {
+		sweepHorizontal(this.tileArray[row]);
+	}
+	//Return the ones marked for deltete
+}
+
+private void sweepHorizontal(Tile[] tiles) {
+	//In an array, determine if there are 3 or more in a row and mark for delete
+	//Return the ones marked for delete
+	// TODO Auto-generated method stub
+
+	Set temp = new HashSet<Integer>();
+	Tile someTile = tiles[0];
+	int matchCount = 0;
+	for (Tile nextTile: tiles){
+		temp.add(nextTile.getIndex());
+		if (nextTile == someTile) matchCount++;
+		else {someTile = nextTile; matchCount = 0;}
+
+		if (matchCount >= 3)
+
+	}
+
+
+	throw new UnsupportedOperationException("Unimplemented method 'sweepHorizontal'");
+}
+
+
+
 
 private boolean checkHorizontal(int x, int y) {
     Object target = this.tileArray[x][y];
     int matchCount = 1; // Include the target element itself
     
+	Set<Integer> temp = new HashSet<Integer>();
     // Check left
-    for (int i = y - 1; i >= 0 && this.tileArray[x][i].equals(target); i--) {
-        matchCount++;
-    }
+    for (int i = y - 1; i >= 0; i--) {
+		if (this.tileArray[x][i].equals(target)) {
+			temp.add(toIndex(x,i));
+			matchCount++;
+		}
+	}
     
     // Check right
     for (int i = y + 1; i < this.tileArray[x].length && this.tileArray[x][i].equals(target); i++) {

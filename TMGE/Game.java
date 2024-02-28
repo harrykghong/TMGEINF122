@@ -16,6 +16,49 @@ public class Game {
     private static final Scanner scanner = new Scanner(System.in);
     private List<String> mathingRules;
     
+    // Testing Additional Members (Matthew)
+    private GUI workingGUI;
+    private int numberOfPlayers;
+
+    // Matthew's Game
+    public Game(GUI gui, Board template, int numberOfPlayers) {
+        this.workingGUI = gui;
+        this.numberOfPlayers = numberOfPlayers;
+
+        this.boardList = new ArrayList<Board>();
+        for (int i = 0; i < this.numberOfPlayers; i++) {
+            this.boardList.add(new Board(template));
+        }
+
+        this.currentPlayerIndex = 0;
+
+        this.userManager = UserManager.getInstance();
+        for (int i = 0; i < this.numberOfPlayers; i++) {
+            this.userManager.addUser(this.workingGUI.getInput());
+        }
+
+        this.isRunning = true;
+    }
+
+    // Matthew's run
+    public void runTEST() {
+        while (true) {
+            String nextInput = workingGUI.getInput();
+
+            while(!processInput(nextInput, this.currentPlayerIndex)) {
+                workingGUI.printToScreen("Player " + (this.currentPlayerIndex + 1) + "'s input is wrong!");
+            }
+
+            updateGameState(this.currentPlayerIndex);
+
+            renderTest();
+        }
+    }
+
+    public void renderTest() {
+        this.workingGUI.printToScreen(this.userManager);
+    }
+
 	public Game(int numberOfPlayers) {
         boardList = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
@@ -68,25 +111,19 @@ public class Game {
         Board currentBoard = boardList.get(currentPlayerIndex);
         switch(input){
             case "w":
-                currentBoard.moveSelectorUp();
-                return true;
+                return currentBoard.moveSelectorUp();
             case "s":
-                currentBoard.moveSelectorDown();
-                return true;
+                return currentBoard.moveSelectorDown();
             case "a":
-                currentBoard.moveSelectorLeft();
-                return true;
+                return currentBoard.moveSelectorLeft();
             case "d":
-                currentBoard.moveSelectorRight();
-                return true;
+                return currentBoard.moveSelectorRight();
             case "f":
                 // select tile
-                currentBoard.selectorSelects();
-                return true;
+                return currentBoard.selectorSelects();
             case "r":
                 // do swap
-                currentBoard.selectorSwap(); //Problem: I do not know how to use the tile color, hence I do not know how to create the tile.
-                return true;
+                return currentBoard.selectorSwap();
             default:
                 return false;
         }

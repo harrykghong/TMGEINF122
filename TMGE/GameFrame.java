@@ -43,4 +43,13 @@ public class GameFrame extends JFrame {
 
     public void execute(){
     }
+
+    public void populateBoard(Board board, int boardId){
+        Jpanel tempPanel;
+        if (boardId == 1){
+            tempPanel = this.board1;
+        } else {
+            tempPanel = this.board2;
+        }
+    }
 }

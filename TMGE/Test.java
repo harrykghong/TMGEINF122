@@ -11,6 +11,19 @@ public class Test {
 
 	// 	//game
 
+	private static void boardSweepTest(){
+		//int[][] arr = { {{1, 2}, {3, 4}} };
+		int[][] arr = {{1, 2,3}, {1, 4,5},{3, 4,5},{3, 4,5}};
+
+		Board testBoard = new Board(arr);
+
+		//Spawner someSpawner = new Spawner();
+		//testBoard.utilize(someSpawner);
+		System.out.println(testBoard);
+		testBoard.sweepVertical(2);
+
+	}
+
 	private static void tileTest(){
 		Tile tile1 = new Tile(1);
 		Tile tile2 = new Tile(1);
@@ -55,9 +68,12 @@ public class Test {
 			System.out.println(someBoard);
 	}
 	public static void main(String[] args) {
-		tileTest();
-		testBoard();
-		testScore();
+		System.out.println("Running tests");
+		boardSweepTest();
+		//tileTest();
+		//testBoard();
+		//testScore();
+		System.out.println("End tests");
 	}
 
 }

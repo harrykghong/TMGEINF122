@@ -32,7 +32,12 @@ public class Tile {
         this.color = someColor;
     }
 	public Tile(int colorID) {
-        this.color = Color.values()[colorID];
+		try {
+			this.color = Color.values()[colorID];
+		} catch (Exception e) {
+			System.out.println("Tile Constructor failure");
+			e.printStackTrace();
+		}
 	}
 
 	public Color getColor() {

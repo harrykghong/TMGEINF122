@@ -34,18 +34,9 @@ public class Board {
 	Set<Integer> toBeDeleted;
 	private Spawner spawner;
 
-
-	// Matthew's Work RN
-	public Board(Board template) {
-		this(template.row, template.col);
-	}
-
-
-
-	public Board(int row, int col) {
+	public void resetAttributes(){
 		this.tileArray = new Tile[row][col];
-		this.row = row;
-		this.col = col;
+
 		this.size = row * col;
 		this.selectorX = -1;
 		this.selectorY = -1;
@@ -53,18 +44,54 @@ public class Board {
 		this.saveY = -1;
 		this.openSpaces = new HashSet<Integer>();
 		this.toBeDeleted= new HashSet<Integer>();
+
 		for (int i = 0; i < this.size; i++) {
 			this.openSpaces.add(i);
 		}
+
 		for (int i = 0; i < this.tileArray.length; i++) {
 			for (int j = 0; j < this.tileArray[i].length; j++) {
 				this.tileArray[i][j] = new Tile(0);
 			}
 		}
 	}
+	// Matthew's Work RN
+	public Board(Board template) {
+		this(template.row, template.col);
+	}
+
+	public Board(int[][] twoDArray) {
+		this.row = twoDArray.length;
+		this.col = twoDArray[0].length;
+		resetAttributes();
+
+		//System.out.println("Board constructor\n" + this.row +" by "+ this.col);
+
+		try {
+			for (int i = 0; i < this.row; i++){
+				for (int j = 0; j < this.col; j++){
+					this.addTile(new Tile(twoDArray[i][j]), i, j);
+				}
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Board Constructor failure, likely input array is incorrectly sized.");
+			e.printStackTrace();
+		}
+
+	}
+
+	public Board(int row, int col) {
+		this.row = row;
+		this.col = col;
+		resetAttributes();
+	}
+
+	public void fill(){
+		while (this.openSpaces.size() > 0) this.spawn();
+	}
 
 	public void addTile(Tile someTile, int col, int row) {
-		int index = row + col * (this.row);
+		int index = getIndex(col, row);
 		this.openSpaces.remove(index);
 		this.tileArray[col][row] = someTile;
 	}
@@ -88,6 +115,7 @@ public class Board {
 	}
 
 	public void spawn() {
+		if (this.spawner == null) System.out.println("Board spawner not set");
 		this.spawner.spawn();
 	}
 
@@ -150,15 +178,14 @@ public class Board {
 		}
 	}
 
-	public void getIndex(){
-		
+	public int getIndex(int col, int row){
+		return row + col * (this.row);
 	}
 
 	public void update(String rule){
 		switch(rule){
 			case "match 3 horizontal":
-				checkHorizontal(selectedTiles[0].getKey(), selectedTiles[0].getValue());
-				checkHorizontal(selectedTiles[1].getKey(), selectedTiles[1].getValue());
+				//checkHorizontal(selectedTiles[0].getKey(), selectedTiles[0].getValue());
 				break;
 			case "match 3 colors":
 				// colorMatch();
@@ -177,7 +204,6 @@ public class Board {
 		for (int i = 0; i < this.row; i++) {
 			for (int j = 0; j < this.col; j++) {
 				Tile.Color value = this.tileArray[i][j].getColor();
-                // returnString+=value;
 				if (value.ordinal() == 0) {
 					returnString += "x,";
                 }
@@ -204,111 +230,39 @@ public class Board {
 this requires 4 calls of this function, each time for a different targetValue
 */
 
-
-
-public boolean verticleMatchX(int[][] matrix, int targetValue) {
-	int rows = matrix.length;
-    int cols = matrix[0].length;
-
-
-
-    for (int j = 0; j < cols; j++) {
-        for (int i = 0; i < rows - 3; i++) {
-            if (matrix[i][j] == targetValue &&
-                matrix[i + 1][j] == targetValue &&
-                matrix[i + 2][j] == targetValue &&
-                matrix[i + 3][j] == targetValue) {
-                return true;
-
-            }
-        }
-    }
-
-}
-
-public  boolean matchX(int[][] matrix, int targetValue) {
-    int rows = matrix.length;
-    int cols = matrix[0].length;
-
-	verticleMatchX();
-	//Horizontal Match
-    for (int i = 0; i < rows; i++) {
-        if (matrix[i][0] != targetValue) break;
-		for (int j = 0; j < cols; j++) {
-			if (matrix[i][j] != targetValue) break;
-        }
-		// do not return, mark index for deletion
-    }
-
-
-    // Ascending Diagonal Check
-    for (int i = 3; i < rows; i++) {
-        for (int j = 0; j < cols - 3; j++) {
-            if (matrix[i][j] == targetValue &&
-                matrix[i - 1][j + 1] == targetValue &&
-                matrix[i - 2][j + 2] == targetValue &&
-                matrix[i - 3][j + 3] == targetValue) {
-                return true;
-            }
-        }
-    }
-
-    // Descending Diagonal Check
-    for (int i = 3; i < rows; i++) {
-        for (int j = 3; j < cols; j++) {
-            if (matrix[i][j] == targetValue &&
-                matrix[i - 1][j - 1] == targetValue &&
-                matrix[i - 2][j - 2] == targetValue &&
-                matrix[i - 3][j - 3] == targetValue) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-
-
-
-
-private void sweepVertical(){
-
-	for (int col = 0; row < this.tileArray[0].length; col++) {
-		for (int row = 0; row < this.tileArray.length; row++) {
-			Tile someTiel = this.tileArray[row][col];
+public void sweepVertical(int matchX){
+	Tile.Color currentColor;
+	Set<Integer> returnSet = new HashSet<>();
+	Tile tempTile;
+	System.out.println("Running sweepVertical");
+	for (int col = 0; col < this.col; col++) {
+		System.out.println("FIXME: MATCH COLORS INCORRECT");
+		currentColor = this.getTile(col,0).getColor(); 		//FIXME: THIS IS NOT THE FIRST ELEENT OF THE ROW, especially during the second row
+		Set<Integer> temp = new HashSet<>();
+		for (int row = 0; row < this.row; row++) {
+			tempTile = this.getTile(row,col);
+			System.out.println("Tile:" + tempTile + " comp " + currentColor);
+			temp.add(getIndex(col, row));
+			if (tempTile.getColor() != currentColor && temp.size() >= matchX) {
+				returnSet.addAll(temp);
+				currentColor = tempTile.getColor();
+			}
 		}
-
+		System.out.println("remove these indexes:" + returnSet);
 	}
-	//Return the ones marked for deltete
+	System.out.println("remove these indexes:" + returnSet);
 }
-
+//EVERYTHING BELOW IS AI GENERATED< PROCEED WITH CAUTION
 
 private void sweepHorizontal(){
 	for (int row = 0; row < this.tileArray.length; row++) {
-		sweepHorizontal(this.tileArray[row]);
+		//sweepHorizontal(this.tileArray[row]);
+		System.out.println("sweep Horizontal on "+ this.tileArray[row]);
 	}
 	//Return the ones marked for deltete
 }
 
 private void sweepHorizontal(Tile[] tiles) {
-	//In an array, determine if there are 3 or more in a row and mark for delete
-	//Return the ones marked for delete
-	// TODO Auto-generated method stub
-
-	Set temp = new HashSet<Integer>();
-	Tile someTile = tiles[0];
-	int matchCount = 0;
-	for (Tile nextTile: tiles){
-		temp.add(nextTile.getIndex());
-		if (nextTile == someTile) matchCount++;
-		else {someTile = nextTile; matchCount = 0;}
-
-		if (matchCount >= 3)
-
-	}
-
-
 	throw new UnsupportedOperationException("Unimplemented method 'sweepHorizontal'");
 }
 
@@ -337,6 +291,7 @@ private boolean checkHorizontal(int x, int y) {
 }
 
 private boolean checkVertical(int x, int y) {
+
     Object target = this.tileArray[x][y];
     int matchCount = 1; // Include the target element itself
     

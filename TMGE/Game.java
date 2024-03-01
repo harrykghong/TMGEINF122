@@ -14,6 +14,7 @@ public class Game {
 	private UserManager userManager;
     private int currentPlayerIndex;
     private static final Scanner scanner = new Scanner(System.in);
+    private Rule rule;
     private List<String> mathingRules;
     
     // Testing Additional Members (Matthew)
@@ -37,7 +38,10 @@ public class Game {
             this.userManager.addUser(this.workingGUI.getInput());
         }
 
+
         this.isRunning = true;
+
+        this.rule = new TestingPackage.TestingRules();
     }
 
     // Matthew's run
@@ -130,10 +134,24 @@ public class Game {
     }
 
     private void updateGameState(int currentPlayerIndex) {
+        
         //Apply match rules here
-        // Update your game board and game state here
 
-        String rule =  "match 3 horizontal";
+        // Rule Class added version
+        Board currentBoard = boardList.get(currentPlayerIndex);
+        rule.runAllMatch(currentBoard);
+
+        // for (Rule rule : rules) {
+        //     // Match class is for Matched tile
+        //     List<Match> matches = rule.findMatches(currentBoard);
+        //     rule.handleMatches(currentBoard, matches);
+        // }
+
+
+
+        
+        // Without Rule class version
+        String rule =  "match 3 horizon tal";
         String rule2 =  "match 3 colors";
         mathingRules.add(rule);
         mathingRules.add(rule2);

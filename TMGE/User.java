@@ -22,4 +22,8 @@ public class User {
     public String getUserName(){
         return userName;
     }
+
+    public void addScore(int score) {
+        this.userScore.addPoints(score);
+    }
 }

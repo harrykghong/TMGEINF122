@@ -15,18 +15,22 @@ public class Game {
     private int currentPlayerIndex;
     private static final Scanner scanner = new Scanner(System.in);
     private Rule rule;
-    private List<String> mathingRules;
     
     // Testing Additional Members (Matthew)
     private GUI workingGUI;
     private int numberOfPlayers;
+    private ArrayList<String> users;
+
+    // Testing GUI (GameFrame)
+    private GameFrame gameFrame;
 
     // Matthew's Game
-    public Game(GUI gui, Board template, int numberOfPlayers) {
+    public Game(GUI gui, Board template, int numberOfPlayers, Rule ruleSet) {
         this.workingGUI = gui;
         this.numberOfPlayers = numberOfPlayers;
 
         this.boardList = new ArrayList<Board>();
+        this.users = new ArrayList<String>();
         for (int i = 0; i < this.numberOfPlayers; i++) {
             this.boardList.add(new Board(template));
         }
@@ -35,32 +39,51 @@ public class Game {
 
         this.userManager = UserManager.getInstance();
         for (int i = 0; i < this.numberOfPlayers; i++) {
-            this.userManager.addUser(this.workingGUI.getInput());
+            String name = this.workingGUI.getInput("Input Username: ");
+            this.userManager.addUser(name);
+            this.users.add(name);
         }
 
 
         this.isRunning = true;
 
-        this.rule = new TestingPackage.TestingRules();
+        this.rule = ruleSet;
     }
 
     // Matthew's run
     public void runTEST() {
         while (true) {
-            String nextInput = workingGUI.getInput();
+            renderBoard(this.currentPlayerIndex);
+            String nextInput = workingGUI.getInput("Make your Move: ");
 
-            while(!processInput(nextInput, this.currentPlayerIndex)) {
+            try {
+                while(!processInput(nextInput, this.currentPlayerIndex)) {
+                    // workingGUI.printToScreen("Player " + (this.currentPlayerIndex + 1) + "'s input is wrong!");
+                    renderBoard(this.currentPlayerIndex);
+                    nextInput = workingGUI.getInput("Make your Move: ");
+                }
+            }
+            catch (Exception exception) {
                 workingGUI.printToScreen("Player " + (this.currentPlayerIndex + 1) + "'s input is wrong!");
+                continue;
             }
 
             updateGameState(this.currentPlayerIndex);
+                                  
+            renderBoard(this.currentPlayerIndex);
 
-            renderTest();
+            if (this.workingGUI.getInput("Enter to Continue or 'q' to quit: ").equals("q")) {
+                break;
+            }
+            
+            currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
         }
     }
 
-    public void renderTest() {
-        this.workingGUI.printToScreen(this.userManager);
+    public void renderBoard(int playerIndex) {
+        this.workingGUI.printToScreen("User " + this.users.get(playerIndex));
+        this.workingGUI.printToScreen(this.boardList.get(playerIndex));
+
     }
 
 	public Game(int numberOfPlayers) {
@@ -71,7 +94,7 @@ public class Game {
         currentPlayerIndex = 0;
         this.userManager = UserManager.getInstance();
         this.isRunning = true; // Ensure the game loop can start
-        mathingRules = new ArrayList<>();
+        // mathingRules = new ArrayList<>();
     }
 	
     public void run() {
@@ -83,16 +106,15 @@ public class Game {
             //Keep scanner input for now, keylistener is for GUI b
 			String input = scanner.nextLine();
             
-            while(!processInput(input, currentPlayerIndex)){
-                System.out.println("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
-            }
+            // while(!processInput(input, currentPlayerIndex)){
+            //     System.out.println("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
+            // }
             
             //do the match check on board
             updateGameState(currentPlayerIndex); // Update the game state based on rules
 
             render(); // In a non-GUI context, print the state to the console
 
-            currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
             // Implement some delay if necessary to control game speed
             try {
                 Thread.sleep(100); // Sleep for 100 milliseconds
@@ -109,19 +131,23 @@ public class Game {
         cleanup();
     }
 
-    private boolean processInput(String input, int currentPlayer) {
+    private boolean processInput(String input, int currentPlayer) throws Exception {
         // Process player input or simulate game actions
         // w s a d to control the selector in board, r to confirm the selection
         Board currentBoard = boardList.get(currentPlayerIndex);
         switch(input){
             case "w":
-                return currentBoard.moveSelectorUp();
+                currentBoard.moveSelectorUp();
+                return false;
             case "s":
-                return currentBoard.moveSelectorDown();
+                currentBoard.moveSelectorDown();
+                return false;
             case "a":
-                return currentBoard.moveSelectorLeft();
+                currentBoard.moveSelectorLeft();
+                return false;
             case "d":
-                return currentBoard.moveSelectorRight();
+                currentBoard.moveSelectorRight();
+                return false;
             case "f":
                 // select tile
                 return currentBoard.selectorSelects();
@@ -129,33 +155,16 @@ public class Game {
                 // do swap
                 return currentBoard.selectorSwap();
             default:
-                return false;
+                throw new Exception();
+                // return false;
         }
     }
 
     private void updateGameState(int currentPlayerIndex) {
-        
-        //Apply match rules here
-
         // Rule Class added version
         Board currentBoard = boardList.get(currentPlayerIndex);
-        rule.runAllMatch(currentBoard);
-
-        // for (Rule rule : rules) {
-        //     // Match class is for Matched tile
-        //     List<Match> matches = rule.findMatches(currentBoard);
-        //     rule.handleMatches(currentBoard, matches);
-        // }
-
-
-
-        
-        // Without Rule class version
-        String rule =  "match 3 horizon tal";
-        String rule2 =  "match 3 colors";
-        mathingRules.add(rule);
-        mathingRules.add(rule2);
-        boardList.get(currentPlayerIndex).update(mathingRules);
+        int addscore = rule.runAllMatch(currentBoard);
+        userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
     }
 
     private void render() {

@@ -10,13 +10,14 @@ public class TestingRules extends Rule {
     }
     
     @Override
-    public boolean runAllMatch(Board board) {
-        matchVertical(board);
-        matchHorizontal4(board);
-        return true;
+    public int runAllMatch(Board board) {
+        int score = 0;
+        score += matchVertical(board);
+        score += matchHorizontal4(board);
+        return score;
     }
 
-    private boolean matchVertical(Board board) {
-        return false;
+    private int matchVertical(Board board) {
+        return 0;
     }
 }

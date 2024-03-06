@@ -38,8 +38,8 @@ public class Board {
 		this.tileArray = new Tile[row][col];
 
 		this.size = row * col;
-		this.selectorX = -1;
-		this.selectorY = -1;
+		this.selectorX = 0;
+		this.selectorY = 0;
 		this.saveX = -1;
 		this.saveY = -1;
 		this.openSpaces = new HashSet<Integer>();
@@ -58,11 +58,15 @@ public class Board {
 	// Matthew's Work RN
 	public Board(Board template) {
 		this(template.row, template.col);
+		this.selectorX = 0;
+		this.selectorY = 0;
 	}
 
 	public Board(int[][] twoDArray) {
-		this.row = twoDArray.length;
-		this.col = twoDArray[0].length;
+
+		//May be not usable
+		this.row = twoDArray[0].length;
+		this.col = twoDArray.length;
 		resetAttributes();
 
 		//System.out.println("Board constructor\n" + this.row +" by "+ this.col);
@@ -106,9 +110,14 @@ public class Board {
 		return row + col * (this.row);
 	}
 	public Tile getTile(int col, int row) {
+		//System.out.println("getting tile "+col+","+row);
 		return this.tileArray[col][row];
 	}
-
+	public Tile getTile(int index) {
+		int row = index / this.row;
+    	int col = index % this.row;
+		return this.tileArray[col][row];
+	}
 	public void utilize(Spawner someSpawner) {
 		this.spawner = someSpawner;
 		this.spawner.board = this;
@@ -149,6 +158,7 @@ public class Board {
 		return false;
 	}
 	public boolean moveSelectorDown(){
+		System.out.println(this.selectorX);
 		if(this.selectorX < row){
 			this.selectorX++;
 			return true;
@@ -199,17 +209,33 @@ public class Board {
 
 	@Override
 	public String toString() {
-
+		Tile.Color value;
 		String returnString = "---------\n";
 		for (int i = 0; i < this.row; i++) {
 			for (int j = 0; j < this.col; j++) {
-				Tile.Color value = this.tileArray[i][j].getColor();
+				value = this.tileArray[i][j].getColor();
+				String addString = "";
+				
 				if (value.ordinal() == 0) {
-					returnString += "x,";
+					addString += "x";
                 }
 				else {
-					returnString += value.ordinal() + " ";
+					addString += value.ordinal() + " ";
                 }
+			
+				if (isSaveTile(i, j)) {
+					addString = "(" + addString + ")";
+				}
+				else {
+					addString = " " + addString + " ";
+				}
+
+				if (isSelectorTile(i, j)) {
+					returnString += "[" + addString + "]";
+				}
+				else {
+					returnString += " " + addString + " ";
+				}
 			}
 			returnString += "\n";
 		}
@@ -217,7 +243,13 @@ public class Board {
 
 	}
 
+	private boolean isSelectorTile(int x, int y) {
+		return x == this.selectorX && y == this.selectorY;
+	}
 
+	private boolean isSaveTile(int x, int y) {
+		return x == this.saveX && y == this.saveY;
+	}
 
 
 //targetValue = color, recall for each color?
@@ -235,18 +267,33 @@ public void sweepVertical(int matchX){
 	Set<Integer> returnSet = new HashSet<>();
 	Tile tempTile;
 	System.out.println("Running sweepVertical");
-	for (int col = 0; col < this.col; col++) {
+
+
+	// for (int i = 0; i < this.size; i++){
+	// 	System.out.println(i+":"+this.getTile(i));
+	// }
+
+	for (int row = 0; row < this.row; row++) {
+	
 		System.out.println("FIXME: MATCH COLORS INCORRECT");
-		currentColor = this.getTile(col,0).getColor(); 		//FIXME: THIS IS NOT THE FIRST ELEENT OF THE ROW, especially during the second row
+		
 		Set<Integer> temp = new HashSet<>();
-		for (int row = 0; row < this.row; row++) {
-			tempTile = this.getTile(row,col);
-			System.out.println("Tile:" + tempTile + " comp " + currentColor);
+		
+		currentColor = this.getTile(col, 0).getColor();
+
+		for (int col = 0; col < this.col; col++) {
+			tempTile = this.getTile(col, row);
 			temp.add(getIndex(col, row));
-			if (tempTile.getColor() != currentColor && temp.size() >= matchX) {
+			System.out.println("Tile:" + tempTile + " comp " + currentColor);
+
+			//If the color is different add the set of temps if big enough
+			if (tempTile.getColor() != currentColor && temp.size() >= matchX){
 				returnSet.addAll(temp);
+				temp = new HashSet<>();
 				currentColor = tempTile.getColor();
+				temp.add(getIndex(col, row));
 			}
+			
 		}
 		System.out.println("remove these indexes:" + returnSet);
 	}

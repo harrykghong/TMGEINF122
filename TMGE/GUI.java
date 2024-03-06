@@ -9,5 +9,5 @@ package TMGE;
 
 public interface GUI {
     public void printToScreen(Object printable);
-    public String getInput();
+    public String getInput(String inputText);
 }

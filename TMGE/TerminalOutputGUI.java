@@ -22,8 +22,8 @@ public class TerminalOutputGUI implements GUI {
     }
 
     @Override
-    public String getInput() {
-        printToScreen("Input Username: ");
+    public String getInput(String inputText) {
+        printToScreen(inputText);
         return scanner.nextLine();
     }
 

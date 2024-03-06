@@ -13,7 +13,7 @@ public class Test {
 
 	private static void boardSweepTest(){
 		//int[][] arr = { {{1, 2}, {3, 4}} };
-		int[][] arr = {{1, 2,3}, {1, 4,5},{3, 4,5},{3, 4,5}};
+		int[][] arr = {{1, 2,3}, {1, 4, 5},{3, 4, 5},{3, 4, 5}};
 
 		Board testBoard = new Board(arr);
 

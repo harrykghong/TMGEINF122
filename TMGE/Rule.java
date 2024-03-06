@@ -11,11 +11,11 @@ public abstract class Rule {
     // void handleMatches(Board board, List<Match> matches);
 
     // //
-    abstract public boolean runAllMatch(Board board);
+    abstract public int runAllMatch(Board board);
 
 
     // default implementation for horizontal
-    public boolean matchHorizontal3(Board board) {
+    public int matchHorizontal3(Board board) {
         // Horizontal Check
         for (int i = 0; i < board.row; i++) {
             for (int j = 0; j < board.col - 2; j++) {
@@ -24,14 +24,14 @@ public abstract class Rule {
                 if (board.getTile(i, j).getColor() == targetValue &&
                     board.getTile(i, j + 1).getColor() == targetValue &&
                     board.getTile(i, j + 2).getColor() == targetValue){
-                    return true;
+                    return 100;
                 }
             }
         }
-        return false; 
+        return 0; 
     }
 
-    public boolean matchHorizontal4(Board board) {
+    public int matchHorizontal4(Board board) {
         // Horizontal Check
         for (int i = 0; i < board.row; i++) {
             for (int j = 0; j < board.col - 3; j++) {
@@ -41,10 +41,10 @@ public abstract class Rule {
                     board.getTile(i, j + 1).getColor() == targetValue &&
                     board.getTile(i, j + 2).getColor() == targetValue &&
                     board.getTile(i, j + 3).getColor() == targetValue) {
-                    return true;
+                    return 200;
                 }
             }
         }
-        return false;
+        return 0;
     }
 }

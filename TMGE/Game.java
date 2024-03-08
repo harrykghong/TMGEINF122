@@ -20,6 +20,7 @@ public class Game {
     private GUI workingGUI;
     private int numberOfPlayers;
     private ArrayList<String> users;
+    private Spawner spawner;
 
     // Testing GUI (GameFrame)
     private GameFrame gameFrame;
@@ -30,23 +31,27 @@ public class Game {
         this.numberOfPlayers = numberOfPlayers;
 
         this.boardList = new ArrayList<Board>();
+        // this.gameFrame = new GameFrame(this.boardList);
         this.users = new ArrayList<String>();
-        for (int i = 0; i < this.numberOfPlayers; i++) {
-            this.boardList.add(new Board(template));
-        }
 
         this.currentPlayerIndex = 0;
 
         this.userManager = UserManager.getInstance();
+
+        this.spawner = new Spawner();
         for (int i = 0; i < this.numberOfPlayers; i++) {
             String name = this.workingGUI.getInput("Input Username: ");
             this.userManager.addUser(name);
             this.users.add(name);
+
+            this.boardList.add(new Board(template));
+            for (Board someBoard: this.boardList){
+                this.spawner.fill(someBoard);
+            }
+
         }
 
-
         this.isRunning = true;
-
         this.rule = ruleSet;
     }
 
@@ -76,6 +81,7 @@ public class Game {
                 break;
             }
             
+            this.workingGUI.printToScreen(">>>>>"+currentPlayerIndex + " " + boardList.size());
             currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
         }
     }

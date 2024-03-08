@@ -11,16 +11,20 @@ public class Test {
 
 	// 	//game
 
+
 	private static void boardSweepTest(){
 		//int[][] arr = { {{1, 2}, {3, 4}} };
-		int[][] arr = {{1, 2,3}, {1, 4, 5},{3, 4, 5},{3, 4, 5}};
+		int[][] arr = {{1,1,3}, 
+					   {2,2,5},
+					   {2,4,2},
+					   {3,4,4}};
 
 		Board testBoard = new Board(arr);
 
 		//Spawner someSpawner = new Spawner();
 		//testBoard.utilize(someSpawner);
 		System.out.println(testBoard);
-		testBoard.sweepVertical(2);
+		testBoard.sweepHorizontal(2);
 
 	}
 
@@ -59,14 +63,15 @@ public class Test {
 			Board someBoard = new Board(4,4);
 			System.out.println(someBoard);
 
-			Spawner someSpawner = new Spawner();
-			someBoard.utilize(someSpawner);
+			//Spawner someSpawner = new Spawner();
+			//someBoard.utilize(someSpawner);
 
-			for (int i = 0; i < 16; i++){
-				someBoard.spawn();
-			}
+			// for (int i = 0; i < 16; i++){
+			// 	someBoard.spawn();
+			// }
 			System.out.println(someBoard);
 	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests");
 		boardSweepTest();

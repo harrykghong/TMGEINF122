@@ -14,6 +14,7 @@ public class TestingRules extends Rule {
         int score = 0;
         score += matchVertical(board);
         score += matchHorizontal4(board);
+        score += sweepVertical(board, 3);
         return score;
     }
 

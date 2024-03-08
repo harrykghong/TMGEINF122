@@ -12,14 +12,12 @@ public class GameFrame extends JFrame {
     private JFrame frame;
     private JPanel board1;
     private JPanel board2;
-    
+
     public GameFrame(List<Board> boardList){
         // Setting up the external game window
-        this.frame = new JFrame("GameFrame");
+        this.frame = new JFrame("Game");
         this.board1 = new JPanel();
         this.board2 = new JPanel();
-
-        this.board1.setLayout(new GridBagLayout());
 
         this.frame.setSize(500, 1000);
         this.frame.setLocationRelativeTo(null);
@@ -38,13 +36,25 @@ public class GameFrame extends JFrame {
     }
 
     public void populateBoard(Board board, int boardId) {
-        JPanel tempPanel = (boardId == 1) ? this.board1 : this.board2;
+        JPanel tempPanel = (boardId == 0) ? this.board1 : this.board2;
         tempPanel.removeAll();
         for (int i = 0; i < board.row; i++) {
             for (int j = 0; j < board.col; j++) {
                 JPanel tilePanel = new JPanel();
                 tilePanel.setBorder(BorderFactory.createLineBorder(Color.black));
                 switch (board.getTile(i, j).getColor()) {
+                    case BLUE:
+                        tilePanel.setBackground(Color.BLUE);
+                        break;
+                    case YELLOW:
+                        tilePanel.setBackground(Color.YELLOW);
+                        break;
+                    case ORANGE:
+                        tilePanel.setBackground(Color.ORANGE);
+                        break;
+                    case BLACK:
+                        tilePanel.setBackground(Color.BLACK);
+                        break;
                     case RED:
                         tilePanel.setBackground(Color.RED);
                         break;

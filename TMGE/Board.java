@@ -8,7 +8,7 @@ It spawns in tiles.
 
 // Imports
 import java.util.*;
-import java.util.AbstractMap.SimpleEntry;
+
 
 //import java.util.HashMap;
 //import java.util.Map;
@@ -32,7 +32,7 @@ public class Board {
 
 	Set<Integer> openSpaces;
 	Set<Integer> toBeDeleted;
-	private Spawner spawner;
+	//private Spawner spawner;
 
 	public void resetAttributes(){
 		this.tileArray = new Tile[row][col];
@@ -58,15 +58,14 @@ public class Board {
 	// Matthew's Work RN
 	public Board(Board template) {
 		this(template.row, template.col);
-		this.selectorX = 0;
-		this.selectorY = 0;
+		resetAttributes();
 	}
 
 	public Board(int[][] twoDArray) {
 
 		//May be not usable
-		this.row = twoDArray[0].length;
-		this.col = twoDArray.length;
+		this.row = twoDArray.length;
+		this.col = twoDArray[0].length;
 		resetAttributes();
 
 		//System.out.println("Board constructor\n" + this.row +" by "+ this.col);
@@ -90,43 +89,58 @@ public class Board {
 		resetAttributes();
 	}
 
-	public void fill(){
-		while (this.openSpaces.size() > 0) this.spawn();
-	}
+	// public void fill(){
+	// 	while (this.openSpaces.size() > 0) this.spawner.spawn(this);
+	// }
 
-	public void addTile(Tile someTile, int col, int row) {
-		int index = getIndex(col, row);
+	public void addTile(Tile someTile, int row, int col) {
+		int index = getIndex(row, col);
 		this.openSpaces.remove(index);
-		this.tileArray[col][row] = someTile;
+		this.tileArray[row][col] = someTile;
 	}
 
-	public void removeTile(int col, int row) {
+	public void addTile(Tile someTile, int index) {
+		int row = index / this.row;
+    	int col = index % this.row;
+		this.openSpaces.remove(index);
+		this.tileArray[row][col] = someTile;
+	}
+
+	public void removeTile(int row, int col) {
 		int index = row + col * (this.row);
 		this.openSpaces.add(index);
-		this.tileArray[col][row] = new Tile(0);
+		this.tileArray[row][col] = new Tile(0);
 	}
 
-	public int toIndex(int col, int row) {
+	public void removeTile(int index) {
+		int row = index / this.row;
+    	int col = index % this.row;
+		this.openSpaces.add(index);
+		this.tileArray[row][col] = new Tile(0);
+	}
+
+	public int toIndex(int row, int col) {
 		return row + col * (this.row);
 	}
-	public Tile getTile(int col, int row) {
-		//System.out.println("getting tile "+col+","+row);
-		return this.tileArray[col][row];
+
+	public Tile getTile(int row, int col) {
+		//System.out.println("getting tile "+row+","+col);
+		return this.tileArray[row][col];
 	}
 	public Tile getTile(int index) {
 		int row = index / this.row;
     	int col = index % this.row;
-		return this.tileArray[col][row];
-	}
-	public void utilize(Spawner someSpawner) {
-		this.spawner = someSpawner;
-		this.spawner.board = this;
+		return this.getTile(row, col);
 	}
 
-	public void spawn() {
-		if (this.spawner == null) System.out.println("Board spawner not set");
-		this.spawner.spawn();
-	}
+	// public void utilize(Spawner someSpawner) {
+	// 	this.spawner = someSpawner;
+	// }
+
+	// public void spawn() {
+	// 	//if (this.spawner == null) System.out.println("Board spawner not set");
+	// 	this.spawner.spawn(this);
+	// }
 
 
 	public boolean selectorSwap() {
@@ -188,7 +202,7 @@ public class Board {
 		}
 	}
 
-	public int getIndex(int col, int row){
+	public int getIndex(int row, int col){
 		return row + col * (this.row);
 	}
 
@@ -252,113 +266,79 @@ public class Board {
 	}
 
 
-//targetValue = color, recall for each color?
-/*
-1111
-2222
-3333
-4444
+public void sweepHorizontal(int matchX){
+	Tile.Color currentColor;
+	Set<Integer> returnSet = new HashSet<>();
+	Tile tempTile;
+	System.out.println("Running sweepHorizontal");
+	for (int row = 0; row < this.row; row++) {
+		Set<Integer> temp = new HashSet<>();
+		currentColor = this.getTile(row, 0).getColor();
+		for (int col = 0; col < this.col; col++) {
+			tempTile = this.getTile(row, col);	//Get tile
+			System.out.println("tempTile:"+tempTile);
+			// same color
+			if (tempTile.getColor() == currentColor) {
+				temp.add(getIndex(row, col));
+				// Temp Big enough
+				if (temp.size() >= matchX && row == this.row-1) {
+					returnSet.addAll(temp);
+				}
+			}
+			// not same color
+			else
+			{
+				// Temp big enough
+				if (temp.size() >= matchX) {
+					returnSet.addAll(temp);
+				}
+				temp = new HashSet<>();
+				temp.add(getIndex(row, col));
+				currentColor = tempTile.getColor();
+			}
+		}
+	}
+	System.out.println("remove these indexes:" + returnSet);
+}
 
-this requires 4 calls of this function, each time for a different targetValue
-*/
+
 
 public void sweepVertical(int matchX){
 	Tile.Color currentColor;
 	Set<Integer> returnSet = new HashSet<>();
 	Tile tempTile;
 	System.out.println("Running sweepVertical");
-
-
-	// for (int i = 0; i < this.size; i++){
-	// 	System.out.println(i+":"+this.getTile(i));
-	// }
-
-	for (int row = 0; row < this.row; row++) {
-	
-		System.out.println("FIXME: MATCH COLORS INCORRECT");
+	for (int col = 0; col < this.col; col++) {
 		
 		Set<Integer> temp = new HashSet<>();
+		currentColor = this.getTile(0, col).getColor();
 		
-		currentColor = this.getTile(col, 0).getColor();
-
-		for (int col = 0; col < this.col; col++) {
-			tempTile = this.getTile(col, row);
-			temp.add(getIndex(col, row));
-			System.out.println("Tile:" + tempTile + " comp " + currentColor);
-
-			//If the color is different add the set of temps if big enough
-			if (tempTile.getColor() != currentColor && temp.size() >= matchX){
-				returnSet.addAll(temp);
-				temp = new HashSet<>();
-				currentColor = tempTile.getColor();
-				temp.add(getIndex(col, row));
+		for (int row = 0; row < this.row; row++) {
+			tempTile = this.getTile(row, col);	//Get tile
+			// same color
+			if (tempTile.getColor() == currentColor) {
+				temp.add(getIndex(row, col));
+				// Temp Big enough
+				if (temp.size() >= matchX && row == this.row-1) {
+					returnSet.addAll(temp);
+				}
 			}
-			
+			// not same color
+			else
+			{
+				// Temp big enough
+				if (temp.size() >= matchX) {
+					returnSet.addAll(temp);
+				}
+
+				temp = new HashSet<>();
+				temp.add(getIndex(row, col));
+				currentColor = tempTile.getColor();
+			}
 		}
-		System.out.println("remove these indexes:" + returnSet);
 	}
 	System.out.println("remove these indexes:" + returnSet);
-}
-//EVERYTHING BELOW IS AI GENERATED< PROCEED WITH CAUTION
-
-private void sweepHorizontal(){
-	for (int row = 0; row < this.tileArray.length; row++) {
-		//sweepHorizontal(this.tileArray[row]);
-		System.out.println("sweep Horizontal on "+ this.tileArray[row]);
 	}
-	//Return the ones marked for deltete
-}
-
-private void sweepHorizontal(Tile[] tiles) {
-	throw new UnsupportedOperationException("Unimplemented method 'sweepHorizontal'");
-}
-
-
-
-
-private boolean checkHorizontal(int x, int y) {
-    Object target = this.tileArray[x][y];
-    int matchCount = 1; // Include the target element itself
-    
-	Set<Integer> temp = new HashSet<Integer>();
-    // Check left
-    for (int i = y - 1; i >= 0; i--) {
-		if (this.tileArray[x][i].equals(target)) {
-			temp.add(toIndex(x,i));
-			matchCount++;
-		}
-	}
-    
-    // Check right
-    for (int i = y + 1; i < this.tileArray[x].length && this.tileArray[x][i].equals(target); i++) {
-        matchCount++;
-    }
-    
-    return matchCount >= 3; // Assuming a match is 3 or more elements
-}
-
-private boolean checkVertical(int x, int y) {
-
-    Object target = this.tileArray[x][y];
-    int matchCount = 1; // Include the target element itself
-    
-    // Check up
-    for (int i = x - 1; i >= 0 && this.tileArray[i][y].equals(target); i--) {
-        matchCount++;
-    }
-    
-    // Check down
-    for (int i = x + 1; i < this.tileArray.length && this.tileArray[i][y].equals(target); i++) {
-        matchCount++;
-    }
-    
-    return matchCount >= 3; // Assuming a match is 3 or more elements
-}
-
-
-
-
-
 
 }
 

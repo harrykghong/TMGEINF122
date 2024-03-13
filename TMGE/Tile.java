@@ -28,7 +28,7 @@ public class Tile {
   //public static final Color VERY_LIGHT_RED = new Color(255,102,102);
   // do we need 3  seperate values in constructor?
 
-    public Tile (Color someColor) {
+    public Tile(Color someColor) {
         this.color = someColor;
     }
 	public Tile(int colorID) {
@@ -42,6 +42,9 @@ public class Tile {
 
 	public Color getColor() {
 		return this.color;
+	}
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
     @Override
@@ -61,8 +64,5 @@ public class Tile {
          
 		return this.color == ((Tile) obj).color;
     }
-
-
-
 	
 }

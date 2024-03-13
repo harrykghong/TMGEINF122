@@ -73,6 +73,7 @@ public class Game {
                 continue;
             }
 
+            System.out.println("Done processing input! Doing matching rule check");
             updateGameState(this.currentPlayerIndex);
                                   
             renderBoard(this.currentPlayerIndex);
@@ -81,7 +82,7 @@ public class Game {
                 break;
             }
             
-            this.workingGUI.printToScreen(">>>>>"+currentPlayerIndex + " " + boardList.size());
+            //this.workingGUI.printToScreen(">>>>>"+currentPlayerIndex + " " + boardList.size());
             currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
         }
     }
@@ -139,6 +140,10 @@ public class Game {
 
     private boolean processInput(String input, int currentPlayer) throws Exception {
         // Process player input or simulate game actions
+
+        // WASD Controls
+        // F to select
+        // R to swap
         // w s a d to control the selector in board, r to confirm the selection
         Board currentBoard = boardList.get(currentPlayerIndex);
         switch(input){
@@ -155,11 +160,11 @@ public class Game {
                 currentBoard.moveSelectorRight();
                 return false;
             case "f":
-                // select tile
-                return currentBoard.selectorSelects();
+                currentBoard.selectorSelects();
+                return false;
             case "r":
-                // do swap
                 return currentBoard.selectorSwap();
+                // Do not put "return false" here, it is the condition to progress turns
             default:
                 throw new Exception();
                 // return false;
@@ -168,8 +173,10 @@ public class Game {
 
     private void updateGameState(int currentPlayerIndex) {
         // Rule Class added version
+        System.out.println("Updating Game State for P"+currentPlayerIndex);
         Board currentBoard = boardList.get(currentPlayerIndex);
         int addscore = rule.runAllMatch(currentBoard);
+        System.out.println(addscore);
         userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
     }
 

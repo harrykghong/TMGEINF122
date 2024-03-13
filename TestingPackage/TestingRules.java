@@ -11,14 +11,11 @@ public class TestingRules extends Rule {
     
     @Override
     public int runAllMatch(Board board) {
+        System.out.println("int runAllMatch");
         int score = 0;
-        score += matchVertical(board);
-        score += matchHorizontal4(board);
-        score += sweepVertical(board, 3);
+        score += sweepHorizontal(board, 3);
+        score += 0.5 * sweepVertical(board, 3);
+        board.postMatch();
         return score;
-    }
-
-    private int matchVertical(Board board) {
-        return 0;
     }
 }

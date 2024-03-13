@@ -6,12 +6,28 @@ package TMGE;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class GameFrame extends JFrame {
-    
+public class GameFrame extends JFrame {    
     private JFrame frame;
     private JPanel board1;
     private JPanel board2;
+    private JPanel clicked;
+
+    // ClickablePanel is a class to represent the Tiles in the game board
+    private class ClickablePanel extends JPanel {
+        public ClickablePanel() {
+            super();
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    clicked = ClickablePanel.this;
+                    System.out.println("Panel clicked");
+                }
+            });
+        }
+    }
 
     public GameFrame(List<Board> boardList){
         // Setting up the external game window
@@ -30,7 +46,33 @@ public class GameFrame extends JFrame {
         
         this.frame.add(this.board1);
         this.frame.add(this.board2);
+        this.clicked = null;
     };
+
+    public void swap_tile(String movement) {
+        if (this.clicked == null) {
+            return;
+        }
+        // implement buttons for movements
+        // integrate move functions
+        switch (movement) {
+            case "w":
+                
+                break;
+            case "a":
+                
+                break;
+            case "s":
+                
+                break;
+            case "d":
+                
+                break;
+        
+            default:
+                break;
+        }
+    }
 
     public void execute(){
     }
@@ -40,7 +82,7 @@ public class GameFrame extends JFrame {
         tempPanel.removeAll();
         for (int i = 0; i < board.row; i++) {
             for (int j = 0; j < board.col; j++) {
-                JPanel tilePanel = new JPanel();
+                ClickablePanel tilePanel = new ClickablePanel();
                 tilePanel.setBorder(BorderFactory.createLineBorder(Color.black));
                 switch (board.getTile(i, j).getColor()) {
                     case BLUE:

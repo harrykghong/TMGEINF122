@@ -89,6 +89,8 @@ public class Board {
 		resetAttributes();
 	}
 
+
+	//This function is moved over to Spawner; this class does not have a spawner
 	// public void fill(){
 	// 	while (this.openSpaces.size() > 0) this.spawner.spawn(this);
 	// }
@@ -116,7 +118,7 @@ public class Board {
 		int row = index / this.row;
     	int col = index % this.row;
 		this.openSpaces.add(index);
-		this.tileArray[row][col] = new Tile(0);
+		this.tileArray[row][col] = new Tile(0);	//0 = empty or null
 	}
 
 	public int toIndex(int row, int col) {
@@ -133,24 +135,17 @@ public class Board {
 		return this.getTile(row, col);
 	}
 
-	// public void utilize(Spawner someSpawner) {
-	// 	this.spawner = someSpawner;
-	// }
-
-	// public void spawn() {
-	// 	//if (this.spawner == null) System.out.println("Board spawner not set");
-	// 	this.spawner.spawn(this);
-	// }
-
 
 	public boolean selectorSwap() {
+
+
 		if (saveX < 0 || saveY < 0) return false;
 		
-		Tile.Color savedValue = getTile(saveX, saveY).color;
-		Tile.Color savedValue2 = getTile(selectorX,selectorY).color;
+		Tile.Color color1 = getTile(saveX, saveY).getColor();
+		Tile.Color color2 = getTile(selectorX,selectorY).getColor();
 
-		addTile(new Tile(savedValue), selectorX, selectorY);
-		addTile(new Tile(savedValue2), selectorX, selectorY);
+		this.getTile(saveX,saveY).setColor(color2);
+		this.getTile(selectorX,selectorY).setColor(color1);
 		
 		saveX = -1;
 		saveY = -1;
@@ -158,6 +153,7 @@ public class Board {
 	}
 
 	public boolean selectorSelects(){
+
 		this.saveX = this.selectorX;
 		this.saveY = this.selectorY;
 		if (this.saveX < 0 || this.saveY < 0) return false;
@@ -173,7 +169,7 @@ public class Board {
 	}
 	public boolean moveSelectorDown(){
 		System.out.println(this.selectorX);
-		if(this.selectorX < row){
+		if(this.selectorX+1 < row){
 			this.selectorX++;
 			return true;
 		}
@@ -187,38 +183,17 @@ public class Board {
 		return false;
 	}
 	public boolean moveSelectorRight(){
-		if(this.selectorX < col){
-			this.selectorX++;
+		System.out.println("X="+this.selectorX+"; Y="+this.selectorY);
+		if(this.selectorY+1 < col){
+			this.selectorY++;
 			return true;
 		}
+
 		return false;
-	}
-
-
-	public void update(List<String> ruleList){
-		// loop all rules
-		for (String rule: ruleList){
-			update(rule);
-		}
 	}
 
 	public int getIndex(int row, int col){
 		return row + col * (this.row);
-	}
-
-	public void update(String rule){
-		switch(rule){
-			case "match 3 horizontal":
-				//checkHorizontal(selectedTiles[0].getKey(), selectedTiles[0].getValue());
-				break;
-			case "match 3 colors":
-				// colorMatch();
-				break;
-			case "match 3 vertical":
-				// verticleMatchX();
-			default:
-				break;
-		}
 	}
 
 	@Override
@@ -265,6 +240,130 @@ public class Board {
 		return x == this.saveX && y == this.saveY;
 	}
 
+	public void postMatch() {
+		dropTiles();	//Gravity
+		// fill();
+	}
+	/*
+	indexing orde
+	0 4 8
+	1 5 9
+	2 6 10
+	3 7 11
+	
+
+	00 01 02 03
+	10 11 12 13
+	20 21 22 23
+	30 31 32 33
+	
+	from bottom row to top
+	
+
+
+
+
+	PYTHON EXAMPLE OF 
+	def simulate_gravity(matrix):
+		nrows = len(matrix)
+		ncols = len(matrix[0]) if nrows > 0 else 0
+
+		for col in range(ncols):
+			# Start from the second-to-last row and move upwards
+			for row in range(nrows - 2, -1, -1):
+				if matrix[row][col] != 0:  # If the current cell is not empty
+					# "Fall" towards the bottom of the column
+					current_row = row
+					while current_row < nrows - 1 and matrix[current_row + 1][col] == 0:
+						# Swap elements to simulate "falling"
+						matrix[current_row][col], matrix[current_row + 1][col] = matrix[current_row + 1][col], matrix[current_row][col]
+						current_row += 1
+    return matrix
+
+	# Example usage
+	matrix = [
+		[0, 2, 0, 0],
+		[3, 0, 4, 0],
+		[0, 0, 0, 5],
+		[1, 0, 2, 0]
+	]
+	becomes
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
+		[3, 0, 4, 0],
+		[1, 2, 2, 5]
+	which is correct but i 
+
+	print("Before gravity:")
+	for row in matrix:
+		print(row)
+
+	simulate_gravity(matrix)
+
+	print("\nAfter gravity:")
+	for row in matrix:
+		print(row)
+
+
+
+scene1
+		X 3 4 5 			
+		X 4 5 6
+		X 7 8 9
+		9 3 4 5 			
+		8 4 5 6
+		4 7 8 9
+		
+		stored = [4,8,9]
+		presumably fill the col right after traversing
+		continue to next col
+		uses two traversals instead of 1
+		is not bubble sort
+
+scene2
+
+		9 3 4 5 			
+		X 4 5 6
+		X 7 8 9
+		X 3 4 5 			
+		8 4 5 6
+		4 7 8 9
+		stored = [4,8,9]
+
+scene3:
+		X 3 4 5 			
+		X 4 5 6
+		5 7 8 9
+		9 3 4 5 			
+		X 4 5 6
+		X 7 X 9
+	*/ 
+	private void dropTiles() {
+		for (int currentCol = 0; currentCol < this.col; currentCol++) {
+
+
+			/*
+			1. get nonempty tiles
+			2. drop?
+			*/
+			
+			for (int currentRow = this.row - 2; currentRow >= 0; currentRow++) {
+				// store tile that is not empty in this array1
+				if (isEmpty(currentRow, currentCol)) {
+					
+				}
+
+			}
+				
+			
+			for (int currentRow = this.row - 1; currentRow >= 0; currentRow++) {
+				// from bottom to top fill the tile we stored in array1 with another loop
+				// and the rest would be empty
+				if (isEmpty)
+
+			}
+		}
+	}
 
 public void sweepHorizontal(int matchX){
 	Tile.Color currentColor;
@@ -278,7 +377,7 @@ public void sweepHorizontal(int matchX){
 			tempTile = this.getTile(row, col);	//Get tile
 			System.out.println("tempTile:"+tempTile);
 			// same color
-			if (tempTile.getColor() == currentColor) {
+			if (tempTile.getColor() == currentColor && currentColor != Tile.Color.NULL) {
 				temp.add(getIndex(row, col));
 				// Temp Big enough
 				if (temp.size() >= matchX && row == this.row-1) {
@@ -303,41 +402,41 @@ public void sweepHorizontal(int matchX){
 
 
 
-public void sweepVertical(int matchX){
-	Tile.Color currentColor;
-	Set<Integer> returnSet = new HashSet<>();
-	Tile tempTile;
-	System.out.println("Running sweepVertical");
-	for (int col = 0; col < this.col; col++) {
-		
-		Set<Integer> temp = new HashSet<>();
-		currentColor = this.getTile(0, col).getColor();
-		
-		for (int row = 0; row < this.row; row++) {
-			tempTile = this.getTile(row, col);	//Get tile
-			// same color
-			if (tempTile.getColor() == currentColor) {
-				temp.add(getIndex(row, col));
-				// Temp Big enough
-				if (temp.size() >= matchX && row == this.row-1) {
-					returnSet.addAll(temp);
+	public void sweepVertical(int matchX){
+		Tile.Color currentColor;
+		Set<Integer> returnSet = new HashSet<>();
+		Tile tempTile;
+		System.out.println("Running sweepVertical");
+		for (int col = 0; col < this.col; col++) {
+			
+			Set<Integer> temp = new HashSet<>();
+			currentColor = this.getTile(0, col).getColor();
+			
+			for (int row = 0; row < this.row; row++) {
+				tempTile = this.getTile(row, col);	//Get tile
+				// same color
+				if (tempTile.getColor() == currentColor && currentColor != Tile.Color.NULL) {
+					temp.add(getIndex(row, col));
+					// Temp Big enough
+					if (temp.size() >= matchX && row == this.row-1) {
+						returnSet.addAll(temp);
+					}
 				}
-			}
-			// not same color
-			else
-			{
-				// Temp big enough
-				if (temp.size() >= matchX) {
-					returnSet.addAll(temp);
-				}
+				// not same color
+				else
+				{
+					// Temp big enough
+					if (temp.size() >= matchX) {
+						returnSet.addAll(temp);
+					}
 
-				temp = new HashSet<>();
-				temp.add(getIndex(row, col));
-				currentColor = tempTile.getColor();
+					temp = new HashSet<>();
+					temp.add(getIndex(row, col));
+					currentColor = tempTile.getColor();
+				}
 			}
 		}
-	}
-	System.out.println("remove these indexes:" + returnSet);
+		System.out.println("remove these indexes:" + returnSet);
 	}
 
 }

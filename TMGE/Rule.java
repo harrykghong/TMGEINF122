@@ -57,6 +57,7 @@ public abstract class Rule {
             // System.out.println("remove these indexes:" + returnSet);
         }
         // System.out.println("remove these indexes:" + returnSet);
+        System.out.println("REMOVE " + returnSet);
         for (int index: returnSet){
             board.removeTile(index);
         }
@@ -97,6 +98,7 @@ public abstract class Rule {
                 }
             }
         }
+        System.out.println("REMOVE " + returnSet);
         for (int index: returnSet){
             board.removeTile(index);
         }

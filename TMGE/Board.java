@@ -115,8 +115,8 @@ public class Board {
 	}
 
 	public void removeTile(int index) {
-		int row = index / this.row;
-    	int col = index % this.row;
+		int col = index / this.row;
+    	int row = index % this.row;
 		this.openSpaces.add(index);
 		this.tileArray[row][col] = new Tile(0);	//0 = empty or null
 	}
@@ -168,7 +168,6 @@ public class Board {
 		return false;
 	}
 	public boolean moveSelectorDown(){
-		System.out.println(this.selectorX);
 		if(this.selectorX+1 < row){
 			this.selectorX++;
 			return true;
@@ -183,7 +182,6 @@ public class Board {
 		return false;
 	}
 	public boolean moveSelectorRight(){
-		System.out.println("X="+this.selectorX+"; Y="+this.selectorY);
 		if(this.selectorY+1 < col){
 			this.selectorY++;
 			return true;
@@ -341,25 +339,25 @@ scene3:
 	private void dropTiles() {
 		for (int currentCol = 0; currentCol < this.col; currentCol++) {
 
-
-			/*
-			1. get nonempty tiles
-			2. drop?
-			*/
-			
-			for (int currentRow = this.row - 2; currentRow >= 0; currentRow++) {
+			ArrayList<Tile> temp = new ArrayList<Tile>();
+			for (int currentRow = this.row - 1; currentRow >= 0; currentRow--) {
 				// store tile that is not empty in this array1
-				if (isEmpty(currentRow, currentCol)) {
-					
+				Tile currentTile = this.getTile(currentRow, currentCol);
+				if (currentTile.color != Tile.Color.NULL) {
+					temp.add(currentTile);
 				}
-
 			}
-				
 			
-			for (int currentRow = this.row - 1; currentRow >= 0; currentRow++) {
+			for (int currentRow = this.row - 1; currentRow >= 0; currentRow--) {
 				// from bottom to top fill the tile we stored in array1 with another loop
 				// and the rest would be empty
-				if (isEmpty)
+				int i = ((this.row-1) - currentRow);
+				if (i < temp.size()) {
+					tileArray[currentRow][currentCol] = temp.get(i);
+				}
+				else {
+					tileArray[currentRow][currentCol] = new Tile(5);
+				}
 
 			}
 		}
@@ -375,7 +373,7 @@ public void sweepHorizontal(int matchX){
 		currentColor = this.getTile(row, 0).getColor();
 		for (int col = 0; col < this.col; col++) {
 			tempTile = this.getTile(row, col);	//Get tile
-			System.out.println("tempTile:"+tempTile);
+			// System.out.println("tempTile:"+tempTile);
 			// same color
 			if (tempTile.getColor() == currentColor && currentColor != Tile.Color.NULL) {
 				temp.add(getIndex(row, col));
@@ -398,6 +396,7 @@ public void sweepHorizontal(int matchX){
 		}
 	}
 	System.out.println("remove these indexes:" + returnSet);
+
 }
 
 
@@ -408,7 +407,7 @@ public void sweepHorizontal(int matchX){
 		Tile tempTile;
 		System.out.println("Running sweepVertical");
 		for (int col = 0; col < this.col; col++) {
-			
+			System.out.print("COL = " + col + "; " + returnSet);
 			Set<Integer> temp = new HashSet<>();
 			currentColor = this.getTile(0, col).getColor();
 			

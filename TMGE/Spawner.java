@@ -16,16 +16,14 @@ public class Spawner {
 
 	public Spawner() {
 		this.pattern = "random";
-		System.out.println("Spawner only spawns in random configurations atm");
 	}
 
 	public void spawn(Board board){
 		Tile someTile = new Tile(ThreadLocalRandom.current().nextInt(1, 9));
 		int randomIndex = getRandomElement(board.openSpaces);
 		board.openSpaces.remove(randomIndex);
-		//int col = randomIndex / board.row;
-		//int row = randomIndex % board.row;
 		board.addTile(someTile, randomIndex);
+		System.out.println("Tile spawned:"+someTile);
 	}
 
 	public void fill(Board board){
@@ -34,56 +32,24 @@ public class Spawner {
 		}
 	}
 
-	// public void spawn() {
-	// 	//Random value tile 
-	// 	Tile someTile = new Tile(ThreadLocalRandom.current().nextInt(1, 9));
-	// 	//Tile someTile = new Tile(1);
-		
-	// 	switch (this.pattern) {
-	// 	case "random":
-	// 		try {
-	// 			int randomIndex = getRandomElement(this.board.openSpaces);
-	// 			this.board.openSpaces.remove(randomIndex);
-	// 			int col = randomIndex / this.board.row;
-	// 			int row = randomIndex % this.board.row;
-	// 			this.board.addTile(someTile, col, row);
-	// 		}
-	// 		catch(Exception e) {
-	// 			System.out.println("error spawning; likely no possible spots");
-	// 			break;
-	// 		}
-
-	// 		break;
-
-	// 	default:
-	// 		break;
-	// 	}
-	// }
-
 	private static <E>  E getRandomElement(Set<? extends E> set) 
     { 
 		if (set.size()==0) return null;
         Random random = new Random(); 
   
-        // Generate a random number using nextInt 
-        // method of the Random class. 
         int randomNumber = random.nextInt(set.size()); 
   
         Iterator<? extends E> iterator = set.iterator(); 
   
-        int currentIndex = 0; 
-        E randomElement = null; 
+        int currentIndex = 0;
+        E randomElement = null;
   
-        // iterate the HashSet 
         while (iterator.hasNext()) { 
   
             randomElement = iterator.next(); 
   
-            // if current index is equal to random number 
             if (currentIndex == randomNumber) 
-                return randomElement; 
-  
-            // increase the current index 
+                return randomElement;
             currentIndex++; 
         } 
   

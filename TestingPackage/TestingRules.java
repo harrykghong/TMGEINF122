@@ -11,11 +11,18 @@ public class TestingRules extends Rule {
     
     @Override
     public int runAllMatch(Board board) {
-        System.out.println("int runAllMatch");
         int score = 0;
         score += sweepHorizontal(board, 3);
-        score += 0.5 * sweepVertical(board, 3);
-        board.postMatch();
+        score += sweepVertical(board, 3);
         return score;
+    }
+
+    @Override
+    public boolean checkGameOver(Board board, int turn, int score) {
+        if (score > 200) {
+            return true;
+        }
+
+        return false;
     }
 }

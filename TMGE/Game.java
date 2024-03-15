@@ -44,10 +44,20 @@ public class Game {
             this.userManager.addUser(name);
             this.users.add(name);
 
-            this.boardList.add(new Board(template));
-            for (Board someBoard: this.boardList){
-                this.spawner.fill(someBoard);
-            }
+            // this.boardList.add(new Board(template));
+            // for (Board someBoard: this.boardList){
+            //     this.spawner.fill(someBoard);
+            // }
+
+
+            int[][] tempArray = {
+                        {1, 2, 3, 4}, 
+                        {5, 5, 5, 5}, 
+                        {1, 2, 3, 4},
+                        {1, 2, 3, 4} 
+                    };
+
+            this.boardList.add(new Board(tempArray));
 
         }
 
@@ -57,15 +67,15 @@ public class Game {
 
     // Matthew's run
     public void runTEST() {
+        int x = 0;
         while (true) {
             renderBoard(this.currentPlayerIndex);
             String nextInput = workingGUI.getInput("Make your Move: ");
 
             try {
                 while(!processInput(nextInput, this.currentPlayerIndex)) {
-                    // workingGUI.printToScreen("Player " + (this.currentPlayerIndex + 1) + "'s input is wrong!");
                     renderBoard(this.currentPlayerIndex);
-                    nextInput = workingGUI.getInput("Make your Move: ");
+                    nextInput = workingGUI.getInput("Make your Move: "+" TURN#"+x++);
                 }
             }
             catch (Exception exception) {
@@ -73,71 +83,40 @@ public class Game {
                 continue;
             }
 
-            System.out.println("Done processing input! Doing matching rule check");
             updateGameState(this.currentPlayerIndex);
-                                  
+
+            //public boolean checkGameOver(Board board, int turn, int score)
+            if (this.rule.checkGameOver(boardList.get(currentPlayerIndex), 5, getPlayerScore(currentPlayerIndex))) {
+                this.workingGUI.printToScreen("GAME OVER!");
+
+                //Should the program terminate? does the loop continue?
+            }
+
             renderBoard(this.currentPlayerIndex);
 
+
+            //WHy is this q to quit just hanging out by itself instead of under process input?
             if (this.workingGUI.getInput("Enter to Continue or 'q' to quit: ").equals("q")) {
                 break;
             }
-            
-            //this.workingGUI.printToScreen(">>>>>"+currentPlayerIndex + " " + boardList.size());
-            currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
+
+            currentPlayerIndex++;
+            currentPlayerIndex %= boardList.size();
+            //currentPlayerIndex = (currentPlayerIndex + 1) % boardList.size();
         }
     }
 
     public void renderBoard(int playerIndex) {
-        this.workingGUI.printToScreen("User " + this.users.get(playerIndex));
+        
+        this.workingGUI.printToScreen("User " + this.users.get(playerIndex) + " Score = " + getPlayerScore(playerIndex));
         this.workingGUI.printToScreen(this.boardList.get(playerIndex));
 
     }
 
-	public Game(int numberOfPlayers) {
-        boardList = new ArrayList<>();
-        for (int i = 0; i < numberOfPlayers; i++) {
-            boardList.add(new Board(4, 4)); // Assuming all boards are 4x4 for simplicity
-        }
-        currentPlayerIndex = 0;
-        this.userManager = UserManager.getInstance();
-        this.isRunning = true; // Ensure the game loop can start
-        // mathingRules = new ArrayList<>();
+    public int getPlayerScore(int currentPlayerIndex) {
+        return this.userManager.getUser(this.users.get(currentPlayerIndex)).getUserScore();
     }
 	
-    public void run() {
-
-		// we should process one player at a time.
-        while (isRunning) {
-            System.out.println("Player " + (currentPlayerIndex + 1) + "'s turn:");
-
-            //Keep scanner input for now, keylistener is for GUI b
-			String input = scanner.nextLine();
-            
-            // while(!processInput(input, currentPlayerIndex)){
-            //     System.out.println("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
-            // }
-            
-            //do the match check on board
-            updateGameState(currentPlayerIndex); // Update the game state based on rules
-
-            render(); // In a non-GUI context, print the state to the console
-
-            // Implement some delay if necessary to control game speed
-            try {
-                Thread.sleep(100); // Sleep for 100 milliseconds
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            // Condition to exit the loop/game, e.g., when the game is over
-            if (gameOverCondition()) {
-                isRunning = false;
-            }
-        }
-
-        cleanup();
-    }
-
     private boolean processInput(String input, int currentPlayer) throws Exception {
         // Process player input or simulate game actions
 
@@ -173,18 +152,12 @@ public class Game {
 
     private void updateGameState(int currentPlayerIndex) {
         // Rule Class added version
-        System.out.println("Updating Game State for P"+currentPlayerIndex);
         Board currentBoard = boardList.get(currentPlayerIndex);
         int addscore = rule.runAllMatch(currentBoard);
-        System.out.println(addscore);
+        currentBoard.dropTiles();
+        this.spawner.fill(currentBoard);
         userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
-    }
-
-    private void render() {
-        for(int i = 0; i<currentPlayerIndex; i++){
-            System.out.println("Player" + (currentPlayerIndex+1) + "Board:");
-		    System.out.println(boardList.get(i+1).toString());
-        }
+        
     }
 
     private boolean gameOverCondition() {

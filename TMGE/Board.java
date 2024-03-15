@@ -96,14 +96,14 @@ public class Board {
 	// }
 
 	public void addTile(Tile someTile, int row, int col) {
-		int index = getIndex(row, col);
+		int index = getIndex(row, col);//row + col * (this.row)
 		this.openSpaces.remove(index);
 		this.tileArray[row][col] = someTile;
 	}
 
 	public void addTile(Tile someTile, int index) {
-		int row = index / this.row;
-    	int col = index % this.row;
+		int col = index / this.row;
+    	int row = index % this.row;
 		this.openSpaces.remove(index);
 		this.tileArray[row][col] = someTile;
 	}
@@ -238,204 +238,28 @@ public class Board {
 		return x == this.saveX && y == this.saveY;
 	}
 
-	public void postMatch() {
-		dropTiles();	//Gravity
-		// fill();
-	}
-	/*
-	indexing orde
-	0 4 8
-	1 5 9
-	2 6 10
-	3 7 11
-	
-
-	00 01 02 03
-	10 11 12 13
-	20 21 22 23
-	30 31 32 33
-	
-	from bottom row to top
-	
-
-
-
-
-	PYTHON EXAMPLE OF 
-	def simulate_gravity(matrix):
-		nrows = len(matrix)
-		ncols = len(matrix[0]) if nrows > 0 else 0
-
-		for col in range(ncols):
-			# Start from the second-to-last row and move upwards
-			for row in range(nrows - 2, -1, -1):
-				if matrix[row][col] != 0:  # If the current cell is not empty
-					# "Fall" towards the bottom of the column
-					current_row = row
-					while current_row < nrows - 1 and matrix[current_row + 1][col] == 0:
-						# Swap elements to simulate "falling"
-						matrix[current_row][col], matrix[current_row + 1][col] = matrix[current_row + 1][col], matrix[current_row][col]
-						current_row += 1
-    return matrix
-
-	# Example usage
-	matrix = [
-		[0, 2, 0, 0],
-		[3, 0, 4, 0],
-		[0, 0, 0, 5],
-		[1, 0, 2, 0]
-	]
-	becomes
-		[0, 0, 0, 0],
-		[0, 0, 0, 0],
-		[3, 0, 4, 0],
-		[1, 2, 2, 5]
-	which is correct but i 
-
-	print("Before gravity:")
-	for row in matrix:
-		print(row)
-
-	simulate_gravity(matrix)
-
-	print("\nAfter gravity:")
-	for row in matrix:
-		print(row)
-
-
-
-scene1
-		X 3 4 5 			
-		X 4 5 6
-		X 7 8 9
-		9 3 4 5 			
-		8 4 5 6
-		4 7 8 9
-		
-		stored = [4,8,9]
-		presumably fill the col right after traversing
-		continue to next col
-		uses two traversals instead of 1
-		is not bubble sort
-
-scene2
-
-		9 3 4 5 			
-		X 4 5 6
-		X 7 8 9
-		X 3 4 5 			
-		8 4 5 6
-		4 7 8 9
-		stored = [4,8,9]
-
-scene3:
-		X 3 4 5 			
-		X 4 5 6
-		5 7 8 9
-		9 3 4 5 			
-		X 4 5 6
-		X 7 X 9
-	*/ 
-	private void dropTiles() {
+	public void dropTiles() {
 		for (int currentCol = 0; currentCol < this.col; currentCol++) {
-
-			ArrayList<Tile> temp = new ArrayList<Tile>();
+			Queue<Tile> queue = new LinkedList<>();
 			for (int currentRow = this.row - 1; currentRow >= 0; currentRow--) {
 				// store tile that is not empty in this array1
 				Tile currentTile = this.getTile(currentRow, currentCol);
 				if (currentTile.color != Tile.Color.NULL) {
-					temp.add(currentTile);
+					queue.add(currentTile);
 				}
 			}
-			
 			for (int currentRow = this.row - 1; currentRow >= 0; currentRow--) {
 				// from bottom to top fill the tile we stored in array1 with another loop
 				// and the rest would be empty
-				int i = ((this.row-1) - currentRow);
-				if (i < temp.size()) {
-					tileArray[currentRow][currentCol] = temp.get(i);
+				if (!queue.isEmpty()) {
+					//Shifts tiles downwards
+					this.addTile(queue.poll(), currentRow, currentCol);
 				}
 				else {
-					tileArray[currentRow][currentCol] = new Tile(5);
-				}
-
-			}
-		}
-	}
-
-public void sweepHorizontal(int matchX){
-	Tile.Color currentColor;
-	Set<Integer> returnSet = new HashSet<>();
-	Tile tempTile;
-	System.out.println("Running sweepHorizontal");
-	for (int row = 0; row < this.row; row++) {
-		Set<Integer> temp = new HashSet<>();
-		currentColor = this.getTile(row, 0).getColor();
-		for (int col = 0; col < this.col; col++) {
-			tempTile = this.getTile(row, col);	//Get tile
-			// System.out.println("tempTile:"+tempTile);
-			// same color
-			if (tempTile.getColor() == currentColor && currentColor != Tile.Color.NULL) {
-				temp.add(getIndex(row, col));
-				// Temp Big enough
-				if (temp.size() >= matchX && row == this.row-1) {
-					returnSet.addAll(temp);
-				}
-			}
-			// not same color
-			else
-			{
-				// Temp big enough
-				if (temp.size() >= matchX) {
-					returnSet.addAll(temp);
-				}
-				temp = new HashSet<>();
-				temp.add(getIndex(row, col));
-				currentColor = tempTile.getColor();
-			}
-		}
-	}
-	System.out.println("remove these indexes:" + returnSet);
-
-}
-
-
-
-	public void sweepVertical(int matchX){
-		Tile.Color currentColor;
-		Set<Integer> returnSet = new HashSet<>();
-		Tile tempTile;
-		System.out.println("Running sweepVertical");
-		for (int col = 0; col < this.col; col++) {
-			System.out.print("COL = " + col + "; " + returnSet);
-			Set<Integer> temp = new HashSet<>();
-			currentColor = this.getTile(0, col).getColor();
-			
-			for (int row = 0; row < this.row; row++) {
-				tempTile = this.getTile(row, col);	//Get tile
-				// same color
-				if (tempTile.getColor() == currentColor && currentColor != Tile.Color.NULL) {
-					temp.add(getIndex(row, col));
-					// Temp Big enough
-					if (temp.size() >= matchX && row == this.row-1) {
-						returnSet.addAll(temp);
-					}
-				}
-				// not same color
-				else
-				{
-					// Temp big enough
-					if (temp.size() >= matchX) {
-						returnSet.addAll(temp);
-					}
-
-					temp = new HashSet<>();
-					temp.add(getIndex(row, col));
-					currentColor = tempTile.getColor();
+					this.removeTile(currentRow,currentCol);
 				}
 			}
 		}
-		System.out.println("remove these indexes:" + returnSet);
 	}
 
 }

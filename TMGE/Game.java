@@ -51,10 +51,10 @@ public class Game {
 
 
             int[][] tempArray = {
-                        {1, 2, 3, 4}, 
-                        {5, 5, 5, 5}, 
-                        {1, 2, 3, 4},
-                        {1, 2, 3, 4} 
+                        {1, 2, 3, 6},
+                        {1, 5, 5, 6},
+                        {1, 2, 3, 5},
+                        {5, 2, 3, 5}
                     };
 
             this.boardList.add(new Board(tempArray));

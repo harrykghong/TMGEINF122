@@ -24,7 +24,7 @@ public class Test {
 		//Spawner someSpawner = new Spawner();
 		//testBoard.utilize(someSpawner);
 		System.out.println(testBoard);
-		testBoard.sweepHorizontal(2);
+//		testBoard.sweepHorizontal(2);
 
 	}
 
@@ -82,3 +82,5 @@ public class Test {
 	}
 
 }
+
+

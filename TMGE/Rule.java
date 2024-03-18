@@ -18,7 +18,7 @@ public abstract class Rule {
     abstract public boolean checkGameOver(Board board, int turn, int score);
 
     public int sweepVertical(Board board, int matchX){
-         System.out.println("in sweepVertical");
+        //System.out.println("in sweepVertical");
         Tile.Color currentColor;
         Set<Integer> returnSet = new HashSet<>();
         Tile tempTile;
@@ -56,7 +56,7 @@ public abstract class Rule {
                 }
             }
         }
-        System.out.println("Return these indexes " + returnSet);
+        //System.out.println("Return these indexes " + returnSet);
         for (int index: returnSet){
             board.removeTile(index);
         }
@@ -64,7 +64,7 @@ public abstract class Rule {
     }
 
     public int sweepHorizontal(Board board, int matchX){
-        System.out.println("Running sweepHorizontal");
+        //System.out.println("Running sweepHorizontal");
         Tile.Color currentColor;
         Set<Integer> returnSet = new HashSet<>();
         Tile tempTile;
@@ -73,7 +73,7 @@ public abstract class Rule {
         for (int row = 0; row < board.row; row++) {
             Set<Integer> temp = new HashSet<>();
             currentColor = board.getTile(row, 0).getColor();
-            System.out.println("At row : " + row);
+            //System.out.println("At row : " + row);
 
             for (int col = 0; col < board.col; col++) {
                 tempTile = board.getTile(row, col);	//Get tile
@@ -101,7 +101,7 @@ public abstract class Rule {
                 }
             }
         }
-        System.out.println("Return these indexes " + returnSet);
+        //System.out.println("Return these indexes " + returnSet);
         for (int index: returnSet){
             board.removeTile(index);
         }

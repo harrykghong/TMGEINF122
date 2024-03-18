@@ -33,6 +33,7 @@ public class Tile {
     }
 	public Tile(int colorID) {
 		try {
+			if (colorID < 0 || colorID > 8) throw new IllegalArgumentException("Invalid colorID: " + colorID);
 			this.color = Color.values()[colorID];
 		} catch (Exception e) {
 			System.out.println("Tile Constructor failure");

@@ -23,11 +23,11 @@ public class Board {
 	int size;
 
 	//Selector indicates the highlighted tile
-	int selectorX;
-	int selectorY;
+	public int selectorX;
+	public int selectorY;
 
-	int saveX;
-	int saveY;
+	public int saveX;
+	public int saveY;
 
 
 	Set<Integer> openSpaces;
@@ -202,7 +202,7 @@ public class Board {
 			for (int j = 0; j < this.col; j++) {
 				value = this.tileArray[i][j].getColor();
 				String addString = "";
-				
+				// System.out.println(value);
 				if (value.ordinal() == 0) {
 					addString += "x";
                 }

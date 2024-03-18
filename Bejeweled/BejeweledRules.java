@@ -1,11 +1,11 @@
-package TestingPackage;
+package Bejeweled;
 
 import TMGE.Rule;
 import TMGE.Board;
 
-public class TestingRules extends Rule {
+public class BejeweledRules extends Rule {
     
-    public TestingRules() {
+    public BejeweledRules() {
         super();
     }
     

@@ -9,18 +9,35 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.ArrayList;
 
 public class Spawner {
 	//public Board board;
-	private String pattern;
+	ArrayList<Tile> tileList;
+	String pattern;
 
 	public Spawner() {
-		this.pattern = "random";
+		this.pattern = "default: 0-8";
+		this.tileList = new ArrayList<>();
+		for (int i = 1; i <= 8; i++) {
+            tileList.add(new Tile(i));
+        }
+	}
+
+	public Spawner(ArrayList<Tile> predeterminedTileList) {
+		this.pattern = "predetermined";
+		this.tileList = predeterminedTileList;
+		//System.out.println("'seconds'");
 	}
 
 	public void spawn(Board board){
-		Tile someTile = new Tile(ThreadLocalRandom.current().nextInt(1, 9));
+		Random random = new Random();
+        int randomNumber = random.nextInt(this.tileList.size());
+		Tile someTile = this.tileList.get(randomNumber);
+
 		int randomIndex = getRandomElement(board.openSpaces);
+
+		System.out.println("tile:"+someTile+" randomIndex:"+randomIndex);
 		board.openSpaces.remove(randomIndex);
 		board.addTile(someTile, randomIndex);
 		System.out.println("Tile spawned:"+someTile);
@@ -54,7 +71,7 @@ public class Spawner {
         } 
   
         return randomElement; 
-    } 
+    }
 
 
 

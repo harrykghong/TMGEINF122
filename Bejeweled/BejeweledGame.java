@@ -22,7 +22,7 @@ public class BejeweledGame extends Game{
         // if addscore != 0, there is matching happen
         while(addscore != 0){
             currentBoard.dropTiles();
-            if (this.doesFill) { this.spawner.fill(currentBoard); };
+            this.spawner.fill(currentBoard);
             userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
 
             // after drop and fill, do the run all match again
@@ -57,7 +57,7 @@ public class BejeweledGame extends Game{
                 return false;
             case "r":
 
-                // swap happens up or down
+                // swap happens up or down or left or right
                 if (Math.abs(currentBoard.saveX - currentBoard.selectorX) <= 1 && Math.abs(currentBoard.saveY - currentBoard.selectorY) == 0 
                 || Math.abs(currentBoard.saveX - currentBoard.selectorX) == 0 && Math.abs(currentBoard.saveY - currentBoard.selectorY) <= 1) {
                     return currentBoard.selectorSwap();

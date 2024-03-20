@@ -7,32 +7,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    public int numberOfPlayers;
 	public List<Board> boardList;
 	public UserManager userManager;
-    public Rule rule;
     public ArrayList<Boolean> gameovers;
-    
-    // Testing Additional Members (Matthew)
-    public GUI workingGUI;
-    public int numberOfPlayers;
     public ArrayList<String> users;
+    
+    public GUI workingGUI;
+    public GameFrame GUI;
+    
     public Spawner spawner;
-    public boolean doesFill = true;
+    public Rule rule;
 
-    // Testing GUI (GameFrame)
     public GameFrame gameFrame;
 
-    // Matthew's Game
-    public Game(GUI gui, Board template, int numberOfPlayers, Rule rule) {
+    // Main Constructor
+    public Game(GUI gui, Board template, int numberOfPlayers, Rule rule, Spawner spawner) {
         this.workingGUI = gui;
+        this.numberOfPlayers = numberOfPlayers;
+
+        this.boardList = new ArrayList<Board>();
+        this.users = new ArrayList<String>();
+        this.gameovers = new ArrayList<Boolean>();
+
+        this.userManager = UserManager.getInstance();
+
+        this.spawner = spawner;
+        for (int i = 0; i < this.numberOfPlayers; i++) {
+            String name = this.workingGUI.getInput("Input Username: ");
+            this.userManager.addUser(name);
+            this.users.add(name);
+            this.gameovers.add(false);
+
+            this.boardList.add(new Board(template));
+            for (Board someBoard: this.boardList){
+                this.spawner.fill(someBoard);
+            }
+        }
+
+        //this.isRunning = true;
+        this.rule = rule;
+    }
+
+
+    // version with GUI
+    public Game(GameFrame GUI, Board template, int numberOfPlayers, Rule rule) {
+        this.GUI = GUI;
         this.numberOfPlayers = numberOfPlayers;
 
         this.boardList = new ArrayList<Board>();
         // this.gameFrame = new GameFrame(this.boardList);
         this.users = new ArrayList<String>();
         this.gameovers = new ArrayList<Boolean>();
-
-        // this.currentPlayerIndex = 0;
 
         this.userManager = UserManager.getInstance();
 
@@ -48,50 +74,44 @@ public class Game {
                 this.spawner.fill(someBoard);
             }
 
-
-            // int[][] tempArray = {
-            //             {1, 2, 3, 5},
-            //             {1, 5, 6, 6},
-            //             {1, 6, 3, 5},
-            //             {1, 2, 3, 5}
-            //         };
-
-            // this.boardList.add(new Board(tempArray));
-
         }
-
         //this.isRunning = true;
         this.rule = rule;
     }
 
-    public Game(GUI gui, Board template, int numberOfPlayers, Rule ruleSet, boolean doesFill) {
-        this(gui, template, numberOfPlayers, ruleSet);
-        this.doesFill = doesFill;
+    public Game(GUI gui, Board template, int numberOfPlayers, Rule ruleSet) {
+        this(gui, template, numberOfPlayers, ruleSet, new Spawner());
     }
 
     // Matthew's run
-    public void runTEST() {
+    public void run() {
         int x = 0; //this is temp, i wanted to debug
         int turn_counter = 1;
-        System.out.println("'Before loop'");
         while (!isGameOver()) {
-            System.out.println("'AFter loop'");
             for (int currentPlayerIndex = 0; currentPlayerIndex < this.numberOfPlayers; currentPlayerIndex++) {
                 if (this.gameovers.get(currentPlayerIndex)) {
                     continue;
                 }
 
+                this.workingGUI.getInput("Player " + this.users.get(currentPlayerIndex) + "'s turn! Enter to Continue");
+
                 renderBoard(currentPlayerIndex);
-                String nextInput = workingGUI.getInput("Turn#" + turn_counter + " Make your Move: ");
+                String nextInput = workingGUI.getInput("Turn #" + turn_counter + " Make your Move: ");
+
+                //Game halts while it waits for input
+                //ideally the gameframe shoudl provide that input
+                //button press = pass some string here
+                //but it doesn't have a getIput function
 
                 try {
                     while(!processInput(nextInput, currentPlayerIndex)) {
                         renderBoard(currentPlayerIndex);
-                        nextInput = workingGUI.getInput("Player#"+currentPlayerIndex+", make your move: " + " INPUT#" + (x++) + " TURN#" + turn_counter);
+                        nextInput = workingGUI.getInput("Turn #" + turn_counter + " Make your Move: ");
                     }
                 } 
                 catch (Exception exception) {
-                    workingGUI.printToScreen("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
+                    // workingGUI.printToScreen("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
+                    nextInput = workingGUI.getInput("Input '" + nextInput + "' was invalid, please try again: ");
                     continue;
                 }
 
@@ -107,8 +127,8 @@ public class Game {
                 renderBoard(currentPlayerIndex);
 
                 //WHy is this q to quit just hanging out by itself instead of under process input?
-                if (this.workingGUI.getInput("Enter to Continue or 'q' to quit: ").equals("q")) {
-                    break;
+                if (this.workingGUI.getInput("Enter to Continue or 'q' to gameover: ").equals("q")) {
+                    this.gameovers.set(currentPlayerIndex, true);
                 }
                 
             }
@@ -129,7 +149,7 @@ public class Game {
 
     public void renderBoard(int playerIndex) {
         
-        this.workingGUI.printToScreen("User " + this.users.get(playerIndex) + " Score = " + getPlayerScore(playerIndex));
+        this.workingGUI.printToScreen("\nUser " + this.users.get(playerIndex) + " Score = " + getPlayerScore(playerIndex));
         this.workingGUI.printToScreen(this.boardList.get(playerIndex));
 
     }
@@ -163,8 +183,6 @@ public class Game {
                 currentBoard.selectorSelects();
                 return false;
             case "r":
-                //check boolean here, bejeweled does not allow and i think should halt here
-
                 return currentBoard.selectorSwap();
                 // Do not put "return false" here, it is the condition to progress turns
             default:
@@ -177,9 +195,22 @@ public class Game {
         // Rule Class added version
         Board currentBoard = boardList.get(currentPlayerIndex);
         int addscore = rule.runAllMatch(currentBoard);
+        //System.out.println("addscore="+addscore);
+
+        this.workingGUI.getInput("Continue After Match");
+        renderBoard(currentPlayerIndex);
+
         currentBoard.dropTiles();
 
-        if (this.doesFill) { this.spawner.fill(currentBoard); };
+        this.workingGUI.getInput("Continue Aftwer Drop");
+        renderBoard(currentPlayerIndex);
+
+        this.spawner.fill(currentBoard);
+
+        
+        this.workingGUI.getInput("Continue After Fill");
+        renderBoard(currentPlayerIndex);
+
         userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
     }
 }

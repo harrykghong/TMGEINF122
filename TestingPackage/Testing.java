@@ -10,7 +10,7 @@ public class Testing {
         TestingRules ruleSet = new TestingRules();
 
         Game game = new Game(workingGUI, template, numPlayers, ruleSet);
-        game.runTEST();
+        game.run();
     }
 
     public static void main(String[] args) {

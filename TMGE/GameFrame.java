@@ -5,16 +5,18 @@ package TMGE;
 // Imports
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GameFrame extends JFrame {    
+public class GameFrame extends JFrame {  //implement GUI  
     private JFrame frame;
     private JPanel board1;
     private JPanel board2;
     private JPanel clicked;
     private JPanel currentBoard;
+    private ArrayList<Board> boardList;
 
     // ClickablePanel is a class to represent the Tiles in the game board
     private class ClickablePanel extends JPanel {
@@ -35,7 +37,7 @@ public class GameFrame extends JFrame {
         }
     }
 
-    public GameFrame(List<Board> boardList){
+    public GameFrame(){
         // Setting up the external game window
         this.frame = new JFrame("Game");
         this.board1 = new JPanel();
@@ -76,13 +78,48 @@ public class GameFrame extends JFrame {
         this.frame.add(buttonPanel, BorderLayout.SOUTH);
 
         this.frame.setVisible(true);
-        populateBoard(boardList.get(0), 0);
-        populateBoard(boardList.get(1), 1);
+        // populateBoard(boardList.get(0), 0);
+        // populateBoard(boardList.get(1), 1);
 
         this.frame.add(board1, BorderLayout.WEST);
         this.frame.add(board2, BorderLayout.EAST);
         this.clicked = null;
     };
+
+
+
+    // It is very strange that the Gameframe apparently plays the game...?
+    // Swapping strongly feels like something that belongs under Game.processInput()
+    // IMO the GUI should represent the current game state and listen for user input and enter it intot he game
+    // and I'm not certain if I see this interacting with the game at all anywhere
+
+
+    //COuld be that GUI should take in a Game, and not a Board?
+    //idk jframes confuse me
+
+    // i'm not sure how to return the updated board to the Game so that the board can be processed
+    // The GUI was designed to represent data and taking input. 
+
+    // @Override
+    // public String getInput(String inputText) {
+    //     printToScreen(inputText);
+    //     return scanner.nextLine();
+    // }
+    // copied from TerminalOutputGUI.java
+    // I am expecting that there should be a function that works similiarly here, but I don't see it
+
+    // private static void run(){
+    //     GUI gui = TerminalOutputGUI.getInstance();
+    //     Board template = new Board(8, 8);
+    //     int numPlayers = Integer.parseInt(gui.getInput("Number of Players"));
+    //     Rule rules = new BejeweledRules();
+    //     Game game = new BejeweledGame(gui, template, numPlayers, rules);
+    //     game.run();
+    // }
+    // copied from Bejeweled.java
+    // it is implied that a GUI can exist without the board
+
+    // it is too different from waht I am expecting- I am kind of lost
 
     public void swap_tile(String movement) {
         if (this.clicked == null || !(this.clicked instanceof ClickablePanel) || this.currentBoard == null) {
@@ -101,29 +138,48 @@ public class GameFrame extends JFrame {
             case "d": newCol += 1; break; // Right
             default: return;
         }
-
+        
+        //note: hardcoded board size
         if (newRow >= 0 && newRow < 4 && newCol >= 0 && newCol < 4) {
             Component[] components = currentBoard.getComponents();
             int indexCurrent = currentRow * 4 + currentCol;
             int indexTarget = newRow * 4 + newCol;
+            int boardIndex = (currentBoard == board1) ? 0 : 1;
+            update_board(indexCurrent, indexTarget, boardIndex);
 
             if (indexCurrent >= 0 && indexCurrent < components.length && indexTarget >= 0 && indexTarget < components.length) {
-                ClickablePanel targetTile = (ClickablePanel)components[indexTarget];
+                populateBoard(boardList.get(boardIndex), boardIndex);
+                // ClickablePanel targetTile = (ClickablePanel)components[indexTarget];
 
-                Color tempColor = clickedTile.getBackground();
-                clickedTile.setBackground(targetTile.getBackground());
-                targetTile.setBackground(tempColor);
+                // Color tempColor = clickedTile.getBackground();
+                // clickedTile.setBackground(targetTile.getBackground());
+                // targetTile.setBackground(tempColor);
 
                 clicked = null;
             }
         }
     }
 
-    // Currently not in use
-    public void execute(){
+    // does not pass user input to the game
+    // directly updates board
+    // swapping two tiles 
+    public ArrayList<Board> update_board(int idxCurr, int idxTar, int boardID) {
+        Board tempBoard = boardList.get(boardID);
+        Tile tempTile = tempBoard.getTile(idxCurr);
+        tempBoard.addTile(tempBoard.getTile(idxTar), idxCurr);
+        tempBoard.addTile(tempTile, idxTar);
+        boardList.set(boardID, tempBoard);
+        return this.boardList;
     }
 
     public void populateBoard(Board board, int boardId) {
+        // String x = "Hello";
+        // String y = x;
+        // y += "world!";
+        //x = Hello
+        //y = Hello world!
+        // Java does not have pointers, none that are easily accessible by programmers anyway
+
         JPanel tempPanel = (boardId == 0) ? this.board1 : this.board2;
         tempPanel.removeAll();
         tempPanel.setLayout(new GridLayout(4, 4)); // Set to 4x4 grid
@@ -160,5 +216,6 @@ public class GameFrame extends JFrame {
         }
         tempPanel.revalidate();
         tempPanel.repaint();
+        //do changes apply??
     }
 }

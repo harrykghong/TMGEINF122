@@ -27,7 +27,9 @@ public class Tile {
 
   //public static final Color VERY_LIGHT_RED = new Color(255,102,102);
   // do we need 3  seperate values in constructor?
-
+    public Tile(Tile someTile) {
+        this.color = someTile.getColor();
+    }
     public Tile(Color someColor) {
         this.color = someColor;
     }

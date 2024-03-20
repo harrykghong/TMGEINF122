@@ -6,17 +6,15 @@ import java.util.Set;
 
 public abstract class Rule {
     private static final int SCORE_VALUE = 100;
-    // // Method to find matches on the board
-    // // Match class is for Matched tile
-    // List<Match> findMatches(Board board);
+    // Method to find matches on the board
+    // Match class is for Matched tile
 
-    // // Method to handle matches (e.g., remove matched tiles, score points)
-    // void handleMatches(Board board, List<Match> matches);
 
     abstract public int runAllMatch(Board board);
 
     abstract public boolean checkGameOver(Board board, int turn, int score);
 
+    // Method to handle matches (e.g., remove matched tiles, score points)
     public int sweepVertical(Board board, int matchX){
         //System.out.println("in sweepVertical");
         Tile.Color currentColor;

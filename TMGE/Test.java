@@ -72,9 +72,17 @@ public class Test {
 			System.out.println(someBoard);
 	}
 
+	private static void guiTest(){
+		// Board someBoard = new Board(4,4);
+		// Board someBoard2 = new Board(4,4);
+		// List<Board> boardList
+		// GameFrame(List<Board> boardList){
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests");
-		boardSweepTest();
+		guiTest();
+		//boardSweepTest();
 		//tileTest();
 		//testBoard();
 		//testScore();

@@ -19,11 +19,7 @@ public class BejeweledRules extends Rule {
 
     @Override
     public boolean checkGameOver(Board board, int turn, int score) {
-        if (score > 0) {
-            return true;
-        }
-
-        if (turn > 3) {
+        if (score > 500) {
             return true;
         }
 

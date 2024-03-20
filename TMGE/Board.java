@@ -10,17 +10,13 @@ It spawns in tiles.
 import java.util.*;
 
 
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.awt.Color;
-
 
 public class Board {
 
-	Tile[][] tileArray;
-	int row;
-	int col;
-	int size;
+	public Tile[][] tileArray;
+	public int row;
+	public int col;
+	public int size;
 
 	//Selector indicates the highlighted tile
 	public int selectorX;
@@ -63,7 +59,6 @@ public class Board {
 
 	public Board(int[][] twoDArray) {
 
-		//May be not usable
 		this.row = twoDArray.length;
 		this.col = twoDArray[0].length;
 		resetAttributes();
@@ -90,13 +85,8 @@ public class Board {
 	}
 
 
-	//This function is moved over to Spawner; this class does not have a spawner
-	// public void fill(){
-	// 	while (this.openSpaces.size() > 0) this.spawner.spawn(this);
-	// }
-
 	public void addTile(Tile someTile, int row, int col) {
-		int index = getIndex(row, col);//row + col * (this.row)
+		int index = getIndex(row, col);
 		this.openSpaces.remove(index);
 		this.tileArray[row][col] = someTile;
 	}
@@ -126,7 +116,6 @@ public class Board {
 	}
 
 	public Tile getTile(int row, int col) {
-		//System.out.println("getting tile "+row+","+col);
 		return this.tileArray[row][col];
 	}
 	public Tile getTile(int index) {

@@ -33,14 +33,14 @@ public class Spawner {
 	public void spawn(Board board){
 		Random random = new Random();
         int randomNumber = random.nextInt(this.tileList.size());
-		Tile someTile = this.tileList.get(randomNumber);
+		Tile someTile = new Tile(this.tileList.get(randomNumber));
 
 		int randomIndex = getRandomElement(board.openSpaces);
 
-		System.out.println("tile:"+someTile+" randomIndex:"+randomIndex);
+		// System.out.println("tile:"+someTile+" randomIndex:"+randomIndex);
 		board.openSpaces.remove(randomIndex);
 		board.addTile(someTile, randomIndex);
-		System.out.println("Tile spawned:"+someTile);
+		// System.out.println("Tile spawned:"+someTile);
 	}
 
 	public void fill(Board board){

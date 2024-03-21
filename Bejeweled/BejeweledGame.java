@@ -15,14 +15,21 @@ public class BejeweledGame extends Game{
     public void updateGameState(int currentPlayerIndex) {
         // Rule Class added version
         Board currentBoard = boardList.get(currentPlayerIndex);
-        
 
         int addscore = this.rule.runAllMatch(currentBoard);
 
         // if addscore != 0, there is matching happen
         while(addscore != 0){
+            this.workingGUI.printToScreen("After Dropping Tiles");
+            renderBoard(currentPlayerIndex);
             currentBoard.dropTiles();
+            this.workingGUI.getInput("Continue");
+
+            this.workingGUI.printToScreen("After Spawning New Ties");
+            renderBoard(currentPlayerIndex);
             this.spawner.fill(currentBoard);
+            this.workingGUI.getInput("Continue");
+
             userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);
 
             // after drop and fill, do the run all match again

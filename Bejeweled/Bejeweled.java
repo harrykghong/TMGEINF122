@@ -5,7 +5,6 @@ import TMGE.GUI;
 import TMGE.TerminalOutputGUI;
 import TMGE.Rule;
 import TMGE.Game;
-import TestingPackage.TestingRules;
 
 public class Bejeweled {
     private static void run(){

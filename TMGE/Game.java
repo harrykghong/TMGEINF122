@@ -85,7 +85,6 @@ public class Game {
 
     // Matthew's run
     public void run() {
-        int x = 0; //this is temp, i wanted to debug
         int turn_counter = 1;
         while (!isGameOver()) {
             for (int currentPlayerIndex = 0; currentPlayerIndex < this.numberOfPlayers; currentPlayerIndex++) {
@@ -103,17 +102,34 @@ public class Game {
                 //button press = pass some string here
                 //but it doesn't have a getIput function
 
-                try {
-                    while(!processInput(nextInput, currentPlayerIndex)) {
+                // try {
+                //     while(!processInput(nextInput, currentPlayerIndex)) {
+                //         renderBoard(currentPlayerIndex);
+                //         nextInput = workingGUI.getInput("Turn #" + turn_counter + " Make your Move: ");
+                //     }
+                // } 
+                // catch (Exception exception) {
+                //     // workingGUI.printToScreen("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
+                //     nextInput = workingGUI.getInput("Input '" + nextInput + "' was invalid, please try again: ");
+                //     continue;
+                // }
+                
+                // nextInput = workingGUI.getInput("Turn #" + turn_counter + " Make your Move: ");
+                while(true) {
+                    try {
+                        if (processInput(nextInput, currentPlayerIndex)) {
+                            break;
+                        }
+                        
                         renderBoard(currentPlayerIndex);
                         nextInput = workingGUI.getInput("Turn #" + turn_counter + " Make your Move: ");
+                    } 
+                    catch (Exception exception) {
+                        // workingGUI.printToScreen("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
+                        nextInput = workingGUI.getInput("Input '" + nextInput + "' was invalid, please try again: ");
                     }
-                } 
-                catch (Exception exception) {
-                    // workingGUI.printToScreen("Player " + (currentPlayerIndex + 1) + "'s input is wrong!");
-                    nextInput = workingGUI.getInput("Input '" + nextInput + "' was invalid, please try again: ");
-                    continue;
                 }
+                
 
                 updateGameState(currentPlayerIndex);
 
@@ -197,18 +213,17 @@ public class Game {
         int addscore = rule.runAllMatch(currentBoard);
         //System.out.println("addscore="+addscore);
 
-        this.workingGUI.getInput("Continue After Match");
         renderBoard(currentPlayerIndex);
 
         currentBoard.dropTiles();
 
-        this.workingGUI.getInput("Continue Aftwer Drop");
+        this.workingGUI.getInput("Continue");
         renderBoard(currentPlayerIndex);
 
         this.spawner.fill(currentBoard);
 
         
-        this.workingGUI.getInput("Continue After Fill");
+        this.workingGUI.getInput("Continue");
         renderBoard(currentPlayerIndex);
 
         userManager.getUser(users.get(currentPlayerIndex)).addScore(addscore);

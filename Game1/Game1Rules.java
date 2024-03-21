@@ -81,7 +81,7 @@ public class Game1Rules extends Rule {
             }
         }
         
-        return -10 * singles;
+        return -5 * singles;
     }
 
     @Override

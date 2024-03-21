@@ -24,7 +24,7 @@ public class Game1 {
         
         Rule rules = new Game1Rules();
     
-        Game game = new Game(gui, template, numPlayers, rules, new Spawner());
+        Game game = new Game(gui, template, numPlayers, rules, new Spawner(tileSet));
         game.run();
     }
 

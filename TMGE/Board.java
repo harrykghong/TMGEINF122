@@ -193,7 +193,7 @@ public class Board {
 				String addString = "";
 				// System.out.println(value);
 				if (value.ordinal() == 0) {
-					addString += "x";
+					addString += "-x-";
                 }
 				else {
 					addString += value.ordinal() + " ";

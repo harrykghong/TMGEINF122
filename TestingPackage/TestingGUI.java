@@ -13,7 +13,8 @@ public class TestingGUI {
         boardList.add(template);
         boardList.add(template2);
 
-        GameFrame workingGUI = new GameFrame(boardList);
+        // GameFrame workingGUI = new GameFrame(boardList);
+        GameFrame workingGUI = new GameFrame();
         
         int numPlayers = 2; //Integer.parseInt(workingGUI.getInput("How many players are there? ")); //missing function
         TestingRules ruleSet = new TestingRules();

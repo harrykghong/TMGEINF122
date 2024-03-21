@@ -4,9 +4,9 @@ package TMGE;
     A class built around displaying to terminal.
  */
 
+// Imports
 import java.util.Scanner;
 
-// Imports
 
 public class TerminalOutputGUI implements GUI {
     private static TerminalOutputGUI instance;

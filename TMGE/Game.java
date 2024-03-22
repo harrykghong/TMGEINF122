@@ -34,9 +34,7 @@ public class Game {
 
         this.spawner = spawner;
         for (int i = 0; i < this.numberOfPlayers; i++) {
-            String name = this.workingGUI.getInput("Input Username: ");
-            this.userManager.addUser(name);
-            this.users.add(name);
+            this.users = this.userManager.getUsers();
             this.gameovers.add(false);
 
             this.boardList.add(new Board(template));
@@ -50,7 +48,7 @@ public class Game {
 
     // Sub-constructor
     /**
-     * Will generate a ame with the defaulted spawner object of tiles 1-9
+     * Will generate a game with the defaulted spawner object of tiles 1-9
      */
     public Game(GUI gui, Board template, int numberOfPlayers, Rule ruleSet) {
         this(gui, template, numberOfPlayers, ruleSet, new Spawner());

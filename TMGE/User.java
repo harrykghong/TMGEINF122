@@ -41,4 +41,8 @@ public class User {
     public void addScore(int score) {
         this.userScore.addPoints(score);
     }
+
+    public void clearScore() {
+        this.userScore = new Score();
+    }
 }

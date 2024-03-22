@@ -1,6 +1,8 @@
 package TMGE;
 // UserManager Singleton class
 
+import java.util.ArrayList;
+
 /*
     Usermanager holds all users, essentially a User Factory
 */
@@ -8,6 +10,7 @@ package TMGE;
 // Imports
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class UserManager {
     private static Map<String, User> userPool;
@@ -71,5 +74,15 @@ public class UserManager {
             userManager = new UserManager();
         }
         return userManager;
+    }
+
+    public ArrayList<String> getUsers() {
+        return new ArrayList<String>(userPool.keySet());
+    }
+    
+    public void clearScores() {
+        for (User user : userPool.values()) {
+            user.clearScore();
+        }
     }
 }

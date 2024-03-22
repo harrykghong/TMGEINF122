@@ -11,10 +11,8 @@ import TMGE.TerminalOutputGUI;
 import TMGE.Tile;
 
 public class DemoAnt {
-    private static void run() {
-        GUI gui = TerminalOutputGUI.getInstance();
+    public DemoAnt(GUI gui, int numPlayers) {
         Board template = new Board(4, 4);
-        int numPlayers = Integer.parseInt(gui.getInput("Number of Players"));
         
         ArrayList<Tile> tileSet = new ArrayList<Tile>();
         tileSet.add(new Tile(1));
@@ -26,9 +24,6 @@ public class DemoAnt {
     
         Game game = new Game(gui, template, numPlayers, rules, new Spawner(tileSet));
         game.run();
-    }
-
-    public static void main(String[] args) {
-        run();
+        
     }
 }

@@ -1,4 +1,4 @@
-# TMGEINF122
+# TMGEINF122 (Tile Matching Game Engine INF122)
 Made by Shenghua Huo, Nathan Le, Quincy Yang, Zhihao Hong, Matthew Mendoza
 
 
